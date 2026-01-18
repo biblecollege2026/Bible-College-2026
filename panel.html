@@ -685,7 +685,7 @@
             queueRenderPage(pageNum);
         }
 
-        // Print function - FIXED VERSION
+        // Print function - IMPROVED VERSION WITH REAL PDF PRINT
         function printPDF() {
             if (!pdfDoc) {
                 alert('Please wait for the PDF to load completely');
@@ -693,20 +693,31 @@
             }
             
             const pdfConfig = PDF_FILES[currentPdfId];
-            alert('📄 Preparing ' + pdfConfig.title + ' for printing... Please wait');
+            const confirmed = confirm('📄 Print "' + pdfConfig.title + '"?\n\n⚠️ Your email (' + studentEmail + ') will appear as watermark on all printed pages.');
             
-            const printWindow = window.open('', '_blank', 'width=800,height=600');
+            if (!confirmed) return;
             
-            if (!printWindow) {
-                alert('⚠️ Please allow pop-ups for this site to enable printing');
-                return;
-            }
+            // Create print-friendly iframe
+            const printFrame = document.createElement('iframe');
+            printFrame.style.position = 'fixed';
+            printFrame.style.right = '0';
+            printFrame.style.bottom = '0';
+            printFrame.style.width = '0';
+            printFrame.style.height = '0';
+            printFrame.style.border = '0';
+            document.body.appendChild(printFrame);
             
-            printWindow.document.write(`
+            const frameDoc = printFrame.contentWindow.document;
+            frameDoc.open();
+            frameDoc.write(`
                 <html>
                 <head>
                     <title>Print - ${pdfConfig.title}</title>
                     <style>
+                        @page {
+                            size: A4;
+                            margin: 0;
+                        }
                         body { 
                             margin: 0; 
                             padding: 0;
@@ -715,49 +726,72 @@
                         .page-container {
                             position: relative;
                             page-break-after: always;
-                            margin: 20px;
+                            page-break-inside: avoid;
+                            width: 100%;
+                            height: 100vh;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+                        .page-container:last-child {
+                            page-break-after: auto;
                         }
                         .page-container img { 
-                            max-width: 100%; 
+                            max-width: 100%;
+                            max-height: 100%;
+                            width: auto;
                             height: auto;
                             display: block;
                         }
                         .watermark {
-                            position: absolute;
+                            position: fixed;
                             top: 50%;
                             left: 50%;
                             transform: translate(-50%, -50%) rotate(-45deg);
-                            font-size: 60px;
-                            color: rgba(220, 53, 69, 0.12);
+                            font-size: 80px;
+                            color: rgba(220, 53, 69, 0.08);
                             font-weight: bold;
                             white-space: nowrap;
                             pointer-events: none;
-                            z-index: 10;
+                            z-index: 9999;
+                            font-family: Arial, sans-serif;
+                            letter-spacing: 5px;
                         }
                         @media print {
                             .page-container {
                                 margin: 0;
-                                page-break-after: always;
+                                padding: 0;
+                            }
+                            .watermark {
+                                display: block !important;
                             }
                         }
                     </style>
                 </head>
                 <body>
-                    <h3 style="text-align:center; padding:10px;">Loading pages...</h3>
-                    <div id="content"></div>
+                    <div class="watermark">${studentEmail.toUpperCase()}</div>
+                    <div id="content">
+                        <p style="text-align:center; padding:50px; font-size:18px;">⏳ Preparing pages for print...</p>
+                    </div>
                 </body>
                 </html>
             `);
-            printWindow.document.close();
+            frameDoc.close();
             
-            const contentDiv = printWindow.document.getElementById('content');
+            const contentDiv = frameDoc.getElementById('content');
             let renderPromises = [];
             
-            // Render all pages
+            // Show loading message
+            const loadingMsg = document.createElement('div');
+            loadingMsg.style.cssText = 'position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.8); color:white; padding:30px; border-radius:10px; z-index:10000; text-align:center;';
+            loadingMsg.innerHTML = '⏳ Preparing print preview...<br><small>Please wait</small>';
+            document.body.appendChild(loadingMsg);
+            
+            // Render all pages at high quality
             for (let i = 1; i <= pdfDoc.numPages; i++) {
                 renderPromises.push(
                     pdfDoc.getPage(i).then(function(page) {
-                        const viewport = page.getViewport({scale: 2.0});
+                        const viewport = page.getViewport({scale: 2.5});
                         const canvas = document.createElement('canvas');
                         const context = canvas.getContext('2d');
                         canvas.height = viewport.height;
@@ -767,39 +801,46 @@
                             canvasContext: context,
                             viewport: viewport
                         }).promise.then(function() {
-                            return {
-                                pageNum: i,
-                                dataUrl: canvas.toDataURL('image/png')
-                            };
+                            return canvas.toDataURL('image/png', 1.0);
                         });
                     })
                 );
             }
 
-            Promise.all(renderPromises).then(function(pages) {
-                // Clear loading message
-                printWindow.document.querySelector('h3').remove();
+            Promise.all(renderPromises).then(function(images) {
+                // Clear loading content
+                contentDiv.innerHTML = '';
                 
-                // Add all pages with watermarks
-                pages.forEach(function(pageData) {
-                    const pageDiv = printWindow.document.createElement('div');
+                // Add all pages
+                images.forEach(function(imgData, index) {
+                    const pageDiv = frameDoc.createElement('div');
                     pageDiv.className = 'page-container';
-                    pageDiv.innerHTML = `
-                        <img src="${pageData.dataUrl}" alt="Page ${pageData.pageNum}">
-                        <div class="watermark">${studentEmail.toUpperCase()}</div>
-                    `;
+                    const img = frameDoc.createElement('img');
+                    img.src = imgData;
+                    img.alt = 'Page ' + (index + 1);
+                    pageDiv.appendChild(img);
                     contentDiv.appendChild(pageDiv);
                 });
                 
-                // Wait for images to load, then print
+                // Remove loading message
+                document.body.removeChild(loadingMsg);
+                
+                // Print after images are loaded
                 setTimeout(function() {
-                    printWindow.focus();
-                    printWindow.print();
-                }, 1000);
+                    printFrame.contentWindow.focus();
+                    printFrame.contentWindow.print();
+                    
+                    // Clean up after print
+                    setTimeout(function() {
+                        document.body.removeChild(printFrame);
+                    }, 1000);
+                }, 500);
+                
             }).catch(function(error) {
                 console.error('Print error:', error);
                 alert('❌ Error preparing print. Please try again.');
-                printWindow.close();
+                document.body.removeChild(loadingMsg);
+                document.body.removeChild(printFrame);
             });
         }
 
@@ -835,4 +876,3 @@
     </script>
 </body>
 </html>
-
