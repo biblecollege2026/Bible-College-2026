@@ -840,4 +840,75 @@
             let renderPromises = [];
             
             const loadingMsg = document.createElement('div');
-            loadingMsg.style.cssText = 'position:fixed; top:50
+            loadingMsg.style.cssText = 'position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.8); color:white; padding:30px; border-radius:10px; z-index:10000; text-align:center;';
+            loadingMsg.innerHTML = '⏳ Preparing print preview...<br><small>Please wait</small>';
+            document.body.appendChild(loadingMsg);
+            
+            for (let i = 1; i <= pdfDoc.numPages; i++) {
+                renderPromises.push(
+                    pdfDoc.getPage(i).then(function(page) {
+                        const viewport = page.getViewport({scale: 2.5});
+                        const tempCanvas = document.createElement('canvas');
+                        const context = tempCanvas.getContext('2d');
+                        tempCanvas.height = viewport.height;
+                        tempCanvas.width = viewport.width;
+
+                        return page.render({
+                            canvasContext: context,
+                            viewport: viewport
+                        }).promise.then(function() {
+                            return tempCanvas.toDataURL('image/png', 1.0);
+                        });
+                    })
+                );
+            }
+
+            Promise.all(renderPromises).then(function(images) {
+                contentDiv.innerHTML = '';
+                
+                images.forEach(function(imgData, index) {
+                    const pageDiv = frameDoc.createElement('div');
+                    pageDiv.className = 'page-container';
+                    const img = frameDoc.createElement('img');
+                    img.src = imgData;
+                    img.alt = 'Page ' + (index + 1);
+                    pageDiv.appendChild(img);
+                    contentDiv.appendChild(pageDiv);
+                });
+                
+                document.body.removeChild(loadingMsg);
+                
+                setTimeout(function() {
+                    printFrame.contentWindow.focus();
+                    printFrame.contentWindow.print();
+                    
+                    setTimeout(function() {
+                        document.body.removeChild(printFrame);
+                    }, 1000);
+                }, 500);
+                
+            }).catch(function(error) {
+                console.error('Print error:', error);
+                document.body.removeChild(loadingMsg);
+                document.body.removeChild(printFrame);
+                alert('Error preparing print. Please try again.');
+            });
+        }
+
+        function logout() {
+            studentEmail = '';
+            document.getElementById('studentEmail').value = '';
+            document.getElementById('pdfSelection').style.display = 'none';
+            document.getElementById('pdfViewer').style.display = 'none';
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('errorMsg').classList.add('hidden');
+            document.getElementById('successMsg').classList.add('hidden');
+            console.log('Logged out');
+        }
+
+        // Debug: Log allowed emails and PDF paths on page load
+        console.log('Allowed emails:', ALLOWED_EMAILS);
+        console.log('PDF paths configured:', PDF_FILE_PATH);
+    </script>
+</body>
+</html>
