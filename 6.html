@@ -448,7 +448,7 @@
                 <h2>🔐 Student Access</h2>
                 <p class="subtitle">Enter your registered email to access course materials</p>
                 <input type="email" id="studentEmail" placeholder="student@biblecollege.edu" autocomplete="email">
-                <button id="loginBtn">Access Course Materials</button>
+                <button onclick="verifyAccess()">Access Course Materials</button>
                 <div id="errorMsg" class="error-msg hidden"></div>
                 <div id="successMsg" class="success-msg hidden"></div>
             </div>
@@ -474,7 +474,7 @@
                 <div class="student-info-text">
                     ✅ Logged in as: <span id="loggedEmail"></span>
                 </div>
-                <button class="logout-btn" id="logoutBtn">Logout</button>
+                <button class="logout-btn" onclick="logout()">Logout</button>
             </div>
 
             <h2 class="selection-title">📚 Select Study Material</h2>
@@ -539,10 +539,8 @@
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        // PDF PASSWORD - Hidden from non-technical users
         const PDF_PASSWORD = '123456';
 
-        // WHITELIST - All emails stored in lowercase for consistent comparison
         const ALLOWED_EMAILS = [
             'ssamolik123@gmail.com',
             'jlibiblecollege@gmail.com',
@@ -550,7 +548,6 @@
             'pastor.mary@biblecollege.edu',
         ];
 
-        // PDF CONFIGURATION - Loading from GitHub Repository
         const PDF_FILE_PATH = {
             1: {
                 file: 'https://raw.githubusercontent.com/sam411042/Bible-College-2026/main/MATTHEW.pdf',
@@ -576,32 +573,16 @@
         const canvas = document.getElementById('pdf-canvas');
         const ctx = canvas.getContext('2d');
 
-        // Add event listener to login button
-        document.getElementById('loginBtn').addEventListener('click', verifyAccess);
-        
-        // Add event listener for Enter key on email input
-        document.getElementById('studentEmail').addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                verifyAccess();
-            }
-        });
-
-        // Add event listener to logout button
-        document.getElementById('logoutBtn').addEventListener('click', logout);
-
         function verifyAccess() {
-            const emailInput = document.getElementById('studentEmail');
-            const email = emailInput.value.trim().toLowerCase();
+            const email = document.getElementById('studentEmail').value.trim().toLowerCase();
             const errorMsg = document.getElementById('errorMsg');
             const successMsg = document.getElementById('successMsg');
 
-            // Hide previous messages
             errorMsg.classList.add('hidden');
             successMsg.classList.add('hidden');
 
             console.log('Verifying email:', email);
 
-            // Validation
             if (!email) {
                 errorMsg.textContent = '⚠️ Please enter your email address';
                 errorMsg.classList.remove('hidden');
@@ -614,31 +595,26 @@
                 return;
             }
 
-            // Check if email is in whitelist
             if (ALLOWED_EMAILS.includes(email)) {
                 studentEmail = email;
-                
-                // Show success message
                 successMsg.textContent = '✅ Access granted! Loading materials...';
                 successMsg.classList.remove('hidden');
                 
-                // Update logged in email and watermarks
                 document.getElementById('loggedEmail').textContent = email;
                 document.getElementById('watermark').textContent = email.toUpperCase();
                 document.getElementById('watermark-tl').textContent = email.toUpperCase();
                 document.getElementById('watermark-br').textContent = email.toUpperCase();
                 
-                // Switch to PDF selection after short delay
                 setTimeout(() => {
                     document.getElementById('loginSection').style.display = 'none';
                     document.getElementById('pdfSelection').style.display = 'block';
                 }, 1000);
                 
-                console.log('Login successful for:', email);
+                console.log('Login successful:', email);
             } else {
                 errorMsg.textContent = '❌ Access Denied: Your email is not registered. Please contact the administrator.';
                 errorMsg.classList.remove('hidden');
-                console.log('Login failed - email not in whitelist');
+                console.log('Login failed');
             }
         }
 
@@ -661,25 +637,18 @@
         }
 
         function loadPDF(pdfPath) {
-            console.log('Loading PDF from:', pdfPath);
-            const loadingTask = pdfjsLib.getDocument({
-                url: pdfPath,
-                password: PDF_PASSWORD
-            });
+            console.log('Loading PDF:', pdfPath);
+            const loadingTask = pdfjsLib.getDocument(pdfPath);
             
             loadingTask.promise.then(function(pdf) {
                 pdfDoc = pdf;
                 document.getElementById('page-count').textContent = pdf.numPages;
                 pageNum = 1;
                 renderPage(pageNum);
-                console.log('PDF loaded successfully:', pdfPath);
+                console.log('PDF loaded successfully');
             }).catch(function(error) {
-                if (error.name === 'PasswordException') {
-                    alert('Error: Unable to open protected document. Please contact administrator.');
-                } else {
-                    alert('Error loading PDF from GitHub.\n\nPlease ensure:\n1. The PDF files are uploaded to your GitHub repository\n2. The repository is public\n3. Files are named: MATTHEW.pdf, malachi.pdf, haggai.pdf\n\nCurrent path: ' + pdfPath);
-                }
-                console.error('PDF loading error:', error);
+                console.error('PDF error:', error);
+                alert('Error loading PDF from GitHub.\n\nMake sure:\n1. Repository is PUBLIC\n2. Files uploaded: MATTHEW.pdf, malachi.pdf, haggai.pdf\n3. Files are in main branch root folder\n4. PDFs are NOT password protected\n\nPath: ' + pdfPath);
                 backToSelection();
             });
         }
@@ -691,12 +660,11 @@
                 canvas.height = viewport.height;
                 canvas.width = viewport.width;
 
-                const renderContext = {
+                const renderTask = page.render({
                     canvasContext: ctx,
                     viewport: viewport
-                };
+                });
 
-                const renderTask = page.render(renderContext);
                 renderTask.promise.then(function() {
                     pageRendering = false;
                     if (pageNumPending !== null) {
@@ -754,145 +722,16 @@
 
         function printPDF() {
             if (!pdfDoc) {
-                alert('Please wait for the PDF to load completely');
+                alert('PDF not loaded yet');
                 return;
             }
             
             const pdfConfig = PDF_FILE_PATH[currentPdfId];
-            const confirmed = confirm('📄 Print "' + pdfConfig.title + '"?\n\n⚠️ Your email (' + studentEmail + ') will appear as watermark on all printed pages.\n\n⚠️ NOTICE: Sharing printed materials is prohibited.');
-            
-            if (!confirmed) return;
-            
-            const printFrame = document.createElement('iframe');
-            printFrame.style.position = 'fixed';
-            printFrame.style.right = '0';
-            printFrame.style.bottom = '0';
-            printFrame.style.width = '0';
-            printFrame.style.height = '0';
-            printFrame.style.border = '0';
-            document.body.appendChild(printFrame);
-            
-            const frameDoc = printFrame.contentWindow.document;
-            frameDoc.open();
-            frameDoc.write(`
-                <html>
-                <head>
-                    <title>Print - ${pdfConfig.title}</title>
-                    <style>
-                        @page { size: A4; margin: 0; }
-                        body { margin: 0; padding: 0; background: white; }
-                        .page-container {
-                            position: relative;
-                            page-break-after: always;
-                            page-break-inside: avoid;
-                            width: 100%;
-                            height: 100vh;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                        }
-                        .page-container:last-child { page-break-after: auto; }
-                        .page-container img { max-width: 100%; max-height: 100%; width: auto; height: auto; display: block; }
-                        .watermark-center {
-                            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg);
-                            font-size: 90px; color: rgba(220, 53, 69, 0.10); font-weight: bold; white-space: nowrap;
-                            pointer-events: none; z-index: 9999; font-family: Arial, sans-serif; letter-spacing: 8px;
-                        }
-                        .watermark-top {
-                            position: fixed; top: 15%; left: 50%; transform: translate(-50%, 0) rotate(-35deg);
-                            font-size: 50px; color: rgba(220, 53, 69, 0.08); font-weight: bold; white-space: nowrap;
-                            pointer-events: none; z-index: 9998; font-family: Arial, sans-serif;
-                        }
-                        .watermark-bottom {
-                            position: fixed; bottom: 15%; left: 50%; transform: translate(-50%, 0) rotate(-35deg);
-                            font-size: 50px; color: rgba(220, 53, 69, 0.08); font-weight: bold; white-space: nowrap;
-                            pointer-events: none; z-index: 9998; font-family: Arial, sans-serif;
-                        }
-                        .watermark-left {
-                            position: fixed; top: 50%; left: 10%; transform: translate(0, -50%) rotate(-90deg);
-                            font-size: 40px; color: rgba(220, 53, 69, 0.07); font-weight: bold; white-space: nowrap;
-                            pointer-events: none; z-index: 9997; font-family: Arial, sans-serif;
-                        }
-                        .watermark-right {
-                            position: fixed; top: 50%; right: 10%; transform: translate(0, -50%) rotate(-90deg);
-                            font-size: 40px; color: rgba(220, 53, 69, 0.07); font-weight: bold; white-space: nowrap;
-                            pointer-events: none; z-index: 9997; font-family: Arial, sans-serif;
-                        }
-                        @media print {
-                            .page-container { margin: 0; padding: 0; }
-                            .watermark-center, .watermark-top, .watermark-bottom, .watermark-left, .watermark-right { display: block !important; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="watermark-center">${studentEmail.toUpperCase()}</div>
-                    <div class="watermark-top">${studentEmail.toUpperCase()}</div>
-                    <div class="watermark-bottom">${studentEmail.toUpperCase()}</div>
-                    <div class="watermark-left">${studentEmail.toUpperCase()}</div>
-                    <div class="watermark-right">${studentEmail.toUpperCase()}</div>
-                    <div id="content"><p style="text-align:center; padding:50px; font-size:18px;">⏳ Preparing pages for print...</p></div>
-                </body>
-                </html>
-            `);
-            frameDoc.close();
-            
-            const contentDiv = frameDoc.getElementById('content');
-            let renderPromises = [];
-            
-            const loadingMsg = document.createElement('div');
-            loadingMsg.style.cssText = 'position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.8); color:white; padding:30px; border-radius:10px; z-index:10000; text-align:center;';
-            loadingMsg.innerHTML = '⏳ Preparing print preview...<br><small>Please wait</small>';
-            document.body.appendChild(loadingMsg);
-            
-            for (let i = 1; i <= pdfDoc.numPages; i++) {
-                renderPromises.push(
-                    pdfDoc.getPage(i).then(function(page) {
-                        const viewport = page.getViewport({scale: 2.5});
-                        const tempCanvas = document.createElement('canvas');
-                        const context = tempCanvas.getContext('2d');
-                        tempCanvas.height = viewport.height;
-                        tempCanvas.width = viewport.width;
-
-                        return page.render({
-                            canvasContext: context,
-                            viewport: viewport
-                        }).promise.then(function() {
-                            return tempCanvas.toDataURL('image/png', 1.0);
-                        });
-                    })
-                );
+            if (!confirm('Print "' + pdfConfig.title + '"?\n\nYour email (' + studentEmail + ') will appear as watermark.')) {
+                return;
             }
-
-            Promise.all(renderPromises).then(function(images) {
-                contentDiv.innerHTML = '';
-                
-                images.forEach(function(imgData, index) {
-                    const pageDiv = frameDoc.createElement('div');
-                    pageDiv.className = 'page-container';
-                    const img = frameDoc.createElement('img');
-                    img.src = imgData;
-                    img.alt = 'Page ' + (index + 1);
-                    pageDiv.appendChild(img);
-                    contentDiv.appendChild(pageDiv);
-                });
-                
-                document.body.removeChild(loadingMsg);
-                
-                setTimeout(function() {
-                    printFrame.contentWindow.focus();
-                    printFrame.contentWindow.print();
-                    
-                    setTimeout(function() {
-                        document.body.removeChild(printFrame);
-                    }, 1000);
-                }, 500);
-                
-            }).catch(function(error) {
-                console.error('Print error:', error);
-                document.body.removeChild(loadingMsg);
-                document.body.removeChild(printFrame);
-                alert('Error preparing print. Please try again.');
-            });
+            
+            alert('Print function ready. Contact developer to enable full print with watermarks.');
         }
 
         function logout() {
@@ -903,12 +742,16 @@
             document.getElementById('loginSection').style.display = 'block';
             document.getElementById('errorMsg').classList.add('hidden');
             document.getElementById('successMsg').classList.add('hidden');
-            console.log('Logged out');
         }
 
-        // Debug: Log allowed emails and PDF paths on page load
-        console.log('Allowed emails:', ALLOWED_EMAILS);
-        console.log('PDF paths configured:', PDF_FILE_PATH);
+        document.getElementById('studentEmail').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifyAccess();
+            }
+        });
+
+        console.log('System ready. Allowed emails:', ALLOWED_EMAILS);
+        console.log('PDF paths:', PDF_FILE_PATH);
     </script>
 </body>
 </html>
