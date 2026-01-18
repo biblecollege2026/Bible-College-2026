@@ -583,7 +583,7 @@
         // Open specific PDF
         function openPDF(pdfId) {
             currentPdfId = pdfId;
-            const pdfConfig = PDF_FILES[pdfId];
+            const pdfConfig = PDF_FILE_PATH[pdfId];
             
             document.getElementById('currentPdfTitle').textContent = pdfConfig.title;
             document.getElementById('pdfSelection').style.display = 'none';
@@ -876,6 +876,7 @@
     </script>
 </body>
 </html>
+
 
 
 
