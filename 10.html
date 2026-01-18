@@ -581,7 +581,6 @@
                 console.log('PDF loaded successfully');
             }).catch(function(error) {
                 console.error('PDF error:', error);
-                alert('Error loading PDF from GitHub.\n\nMake sure:\n1. Repository is PUBLIC\n2. Files uploaded: MATTHEW.pdf, malachi.pdf\n3. Files are in main branch root folder\n\nPath: ' + pdfPath);
                 backToSelection();
             });
         }
@@ -763,5 +762,4 @@
         });
     </script>
 </body>
-
 </html>
