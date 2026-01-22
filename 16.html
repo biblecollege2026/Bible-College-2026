@@ -196,11 +196,46 @@
         .pdf-card-title { font-size: 1.3em; color: #1e3c72; margin-bottom: 10px; font-weight: 700; }
         .pdf-card button { width: auto; padding: 12px 30px; font-size: 0.95em; }
         
+        /* PDF Viewer */
+        .pdf-viewer-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        #pdfCanvas {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .pdf-controls {
+            text-align: center;
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .pdf-controls button {
+            width: auto;
+            padding: 10px 20px;
+        }
+        #pageInfo {
+            padding: 10px 20px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+        
         @media (max-width: 768px) {
             .pdf-cards { grid-template-columns: 1fr; }
             .marks-summary { grid-template-columns: repeat(2, 1fr); }
             .marks-table { font-size: 0.8em; }
             .marks-table th, .marks-table td { padding: 8px; }
+            .student-info { flex-direction: column; align-items: flex-start; }
+            .student-actions { width: 100%; }
         }
     </style>
 </head>
@@ -242,22 +277,56 @@
                 <div class="pdf-card">
                     <div class="pdf-card-icon">📖</div>
                     <h3 class="pdf-card-title">मत्तय</h3>
-                    <button>View Material</button>
+                    <p style="color:#666; font-size:0.9em; margin:10px 0;">MATTHEW GOSPEL</p>
+                    <button onclick="loadPDFFromURL(1)">📖 View Material</button>
                 </div>
                 <div class="pdf-card">
                     <div class="pdf-card-icon">📕</div>
                     <h3 class="pdf-card-title">मार्क</h3>
-                    <button>View Material</button>
+                    <p style="color:#666; font-size:0.9em; margin:10px 0;">MARK GOSPEL</p>
+                    <button onclick="loadPDFFromURL(2)">📕 View Material</button>
                 </div>
                 <div class="pdf-card">
                     <div class="pdf-card-icon">📗</div>
-                    <h3 class="pdf-card-title">लुक</h3>
-                    <button>View Material</button>
+                    <h3 class="pdf-card-title">लूका</h3>
+                    <p style="color:#666; font-size:0.9em; margin:10px 0;">LUKE GOSPEL</p>
+                    <button onclick="loadPDFFromURL(3)">📗 View Material</button>
                 </div>
                 <div class="pdf-card">
                     <div class="pdf-card-icon">📘</div>
-                    <h3 class="pdf-card-title">योहान</h3>
-                    <button>View Material</button>
+                    <h3 class="pdf-card-title">यूहन्ना</h3>
+                    <p style="color:#666; font-size:0.9em; margin:10px 0;">JOHN GOSPEL</p>
+                    <button onclick="loadPDFFromURL(4)">📘 View Material</button>
+                </div>
+                <div class="pdf-card">
+                    <div class="pdf-card-icon">📙</div>
+                    <h3 class="pdf-card-title">प्रेषितों के काम</h3>
+                    <p style="color:#666; font-size:0.9em; margin:10px 0;">ACTS</p>
+                    <button onclick="loadPDFFromURL(5)">📙 View Material</button>
+                </div>
+                <div class="pdf-card">
+                    <div class="pdf-card-icon">📔</div>
+                    <h3 class="pdf-card-title">रोमियों</h3>
+                    <p style="color:#666; font-size:0.9em; margin:10px 0;">ROMANS</p>
+                    <button onclick="loadPDFFromURL(6)">📔 View Material</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PDF Viewer Section -->
+        <div id="pdfViewerSection" class="marks-section">
+            <button class="back-btn" onclick="backToDashboard()">⬅️ Back to Dashboard</button>
+            
+            <div class="marks-header">
+                <h2 id="pdfTitle">📖 Study Material</h2>
+            </div>
+
+            <div class="pdf-viewer-container">
+                <canvas id="pdfCanvas"></canvas>
+                <div class="pdf-controls">
+                    <button onclick="previousPage()">⬅️ Previous</button>
+                    <span id="pageInfo">Page 1 of 1</span>
+                    <button onclick="nextPage()">Next ➡️</button>
                 </div>
             </div>
         </div>
@@ -291,6 +360,34 @@
     </div>
 
     <script>
+        // PDF Configuration
+        const PDF_FILE_PATH = {
+            1: {
+                file: 'https://raw.githubusercontent.com/sam411042/Bible-College-2026/main/matthew.pdf',
+                title: 'मत्तय : MATTHEW GOSPEL'
+            },
+            2: {
+                file: '41.मार्क.pdf',
+                title: 'मार्क : MARK GOSPEL'
+            },
+            3: {
+                file: 'लुक.pdf',
+                title: 'लूका : LUKE GOSPEL'
+            },
+            4: {
+                file: 'https://raw.githubusercontent.com/sam411042/Bible-College-2026/main/john.pdf',
+                title: 'यूहन्ना : JOHN GOSPEL'
+            },
+            5: {
+                file: 'https://raw.githubusercontent.com/sam411042/Bible-College-2026/main/acts.pdf',
+                title: 'प्रेषितों के काम : ACTS'
+            },
+            6: {
+                file: 'https://raw.githubusercontent.com/sam411042/Bible-College-2026/main/romans.pdf',
+                title: 'रोमियों : ROMANS'
+            }
+        };
+
         const STUDENT_DATA = {
             'manoramaramane@gmail.com': { name: 'Manorama Ramane', marks: [90,100,97,100,100,100,93] },
             'rvpardhe07@gmail.com': { name: 'Kavita Pardhe', marks: [92,100,100,100,100,100,86] },
@@ -313,6 +410,12 @@
 
         const EXAMS = ['June', 'July', 'August', 'September', 'October', 'Nov-1', 'Nov-2'];
         let currentUser = '';
+        let pdfDoc = null;
+        let currentPage = 1;
+        let totalPages = 0;
+
+        // Initialize PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
         function verifyAccess() {
             const email = document.getElementById('studentEmail').value.trim().toLowerCase();
@@ -344,6 +447,71 @@
             }
         }
 
+        function loadPDFFromURL(bookId) {
+            const pdfConfig = PDF_FILE_PATH[bookId];
+            if (!pdfConfig) {
+                alert('PDF not found!');
+                return;
+            }
+
+            document.getElementById('pdfTitle').textContent = `📖 ${pdfConfig.title}`;
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('pdfViewerSection').style.display = 'block';
+            
+            // Show loading message
+            const canvas = document.getElementById('pdfCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 800;
+            canvas.height = 400;
+            ctx.fillStyle = '#f0f0f0';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#1e3c72';
+            ctx.font = '20px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Loading PDF...', canvas.width / 2, canvas.height / 2);
+
+            pdfjsLib.getDocument(pdfConfig.file).promise.then(function(pdf) {
+                pdfDoc = pdf;
+                totalPages = pdf.numPages;
+                currentPage = 1;
+                renderPage(currentPage);
+            }).catch(function(error) {
+                alert('Error loading PDF: ' + error.message + '\n\nFor local PDFs (मार्क, लूका), please ensure the files are in the same directory as this HTML file.');
+                backToDashboard();
+            });
+        }
+
+        function renderPage(num) {
+            pdfDoc.getPage(num).then(function(page) {
+                const canvas = document.getElementById('pdfCanvas');
+                const ctx = canvas.getContext('2d');
+                
+                const viewport = page.getViewport({ scale: 1.5 });
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport
+                };
+                
+                page.render(renderContext);
+                document.getElementById('pageInfo').textContent = `Page ${num} of ${totalPages}`;
+            });
+        }
+
+        function previousPage() {
+            if (currentPage <= 1) return;
+            currentPage--;
+            renderPage(currentPage);
+        }
+
+        function nextPage() {
+            if (currentPage >= totalPages) return;
+            currentPage++;
+            renderPage(currentPage);
+        }
+
         function showMarks() {
             const student = STUDENT_DATA[currentUser];
             const marks = student.marks.filter(m => m !== null);
@@ -354,7 +522,7 @@
             const isExcluded = excludedEmails.includes(currentUser);
             
             const avg = isExcluded ? 'N/A' : (total / marks.length).toFixed(2);
-            const percentage = isExcluded ? null : ((total / (marks.length * 100)) * 100).toFixed(2);
+            const percentage = isExcluded ? 'N/A' : ((total / (marks.length * 100)) * 100).toFixed(2);
             const grade = isExcluded ? 'N/A' : (percentage >= 90 ? 'A+' : percentage >= 80 ? 'A' : percentage >= 70 ? 'B+' : percentage >= 60 ? 'B' : percentage >= 50 ? 'C' : 'F');
             const gradeClass = isExcluded ? '' : (percentage >= 80 ? 'grade-A' : percentage >= 60 ? 'grade-B' : percentage >= 50 ? 'grade-C' : 'grade-F');
 
@@ -375,7 +543,7 @@
                 </div>
                 <div class="summary-card">
                     <h3>Percentage</h3>
-                    <div class="value">${percentage}%</div>
+                    <div class="value">${percentage}${percentage !== 'N/A' ? '%' : ''}</div>
                 </div>
                 <div class="summary-card">
                     <h3>Grade</h3>
@@ -407,6 +575,7 @@
 
         function backToDashboard() {
             document.getElementById('marksSection').style.display = 'none';
+            document.getElementById('pdfViewerSection').style.display = 'none';
             document.getElementById('dashboardSection').style.display = 'block';
         }
 
@@ -415,6 +584,7 @@
             document.getElementById('studentEmail').value = '';
             document.getElementById('dashboardSection').style.display = 'none';
             document.getElementById('marksSection').style.display = 'none';
+            document.getElementById('pdfViewerSection').style.display = 'none';
             document.getElementById('loginSection').style.display = 'block';
         }
 
