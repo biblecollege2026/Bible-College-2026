@@ -632,64 +632,48 @@
                 return;
             }
             
-            // Create a new window for printing
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <html>
-                <head>
-                    <title>Print PDF - ${document.getElementById('pdfTitle').textContent}</title>
-                    <style>
-                        body { margin: 0; padding: 20px; }
-                        canvas { 
-                            display: block; 
-                            margin: 20px auto;
-                            max-width: 100%;
-                            page-break-after: always;
-                        }
-                        @media print {
-                            canvas { page-break-after: always; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <h2 style="text-align:center;">${document.getElementById('pdfTitle').textContent}</h2>
-                    <div id="pdfPages"></div>
-                </body>
-                </html>
-            `);
+            // Get the PDF file path
+            const currentPdfId = Object.keys(PDF_FILE_PATH).find(id => 
+                PDF_FILE_PATH[id].title === document.getElementById('pdfTitle').textContent
+            );
             
-            const pagesDiv = printWindow.document.getElementById('pdfPages');
-            let renderedPages = 0;
+            if (!currentPdfId) {
+                alert('PDF information not found');
+                return;
+            }
             
-            // Render all pages
-            for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
-                pdfDoc.getPage(pageNum).then(function(page) {
-                    const canvas = printWindow.document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    
-                    const viewport = page.getViewport({ scale: 1.5 });
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
-                    
-                    const renderContext = {
-                        canvasContext: ctx,
-                        viewport: viewport
+            const pdfPath = PDF_FILE_PATH[currentPdfId].file;
+            
+            // For GitHub URLs, open in new tab and let browser handle printing
+            if (pdfPath.startsWith('http')) {
+                const printWindow = window.open(pdfPath, '_blank');
+                if (printWindow) {
+                    printWindow.onload = function() {
+                        setTimeout(() => {
+                            printWindow.print();
+                        }, 1000);
                     };
-                    
-                    page.render(renderContext).promise.then(() => {
-                        pagesDiv.appendChild(canvas);
-                        renderedPages++;
-                        
-                        // Print when all pages are rendered
-                        if (renderedPages === totalPages) {
-                            setTimeout(() => {
-                                printWindow.focus();
-                                printWindow.print();
-                                printWindow.close();
-                            }, 500);
-                        }
-                    });
-                });
+                } else {
+                    alert('Please allow pop-ups to print PDFs');
+                }
+            } else {
+                // For local files, use iframe method
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = pdfPath;
+                document.body.appendChild(iframe);
+                
+                iframe.onload = function() {
+                    setTimeout(() => {
+                        iframe.contentWindow.focus();
+                        iframe.contentWindow.print();
+                    }, 500);
+                };
+                
+                // Remove iframe after printing
+                setTimeout(() => {
+                    document.body.removeChild(iframe);
+                }, 5000);
             }
         }
 
