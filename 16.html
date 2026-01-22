@@ -172,6 +172,34 @@
         }
         .back-btn:hover { background: #5a6268; }
         
+        .print-btn {
+            width: auto;
+            padding: 10px 20px;
+            background: #28a745;
+            font-size: 0.95em;
+            margin-bottom: 20px;
+            margin-left: 10px;
+        }
+        .print-btn:hover { background: #218838; }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        /* Print Styles */
+        @media print {
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; }
+            .back-btn, .print-btn, .logout-btn { display: none !important; }
+            .marks-header { background: #1e3c72 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .summary-card { page-break-inside: avoid; }
+            .marks-table { page-break-inside: auto; }
+            .marks-table tr { page-break-inside: avoid; }
+        }
+        
         .pdf-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -315,7 +343,10 @@
 
         <!-- PDF Viewer Section -->
         <div id="pdfViewerSection" class="marks-section">
-            <button class="back-btn" onclick="backToDashboard()">⬅️ Back to Dashboard</button>
+            <div class="button-group">
+                <button class="back-btn" onclick="backToDashboard()">⬅️ Back to Dashboard</button>
+                <button class="print-btn" onclick="printPDF()">🖨️ Print PDF</button>
+            </div>
             
             <div class="marks-header">
                 <h2 id="pdfTitle">📖 Study Material</h2>
@@ -333,7 +364,10 @@
 
         <!-- Marks Section -->
         <div id="marksSection" class="marks-section">
-            <button class="back-btn" onclick="backToDashboard()">⬅️ Back to Dashboard</button>
+            <div class="button-group">
+                <button class="back-btn" onclick="backToDashboard()">⬅️ Back to Dashboard</button>
+                <button class="print-btn" onclick="printMarks()">🖨️ Print Marks Card</button>
+            </div>
             
             <div class="marks-header">
                 <h2>📊 Academic Performance</h2>
@@ -586,6 +620,77 @@
             document.getElementById('marksSection').style.display = 'none';
             document.getElementById('pdfViewerSection').style.display = 'none';
             document.getElementById('loginSection').style.display = 'block';
+        }
+
+        function printMarks() {
+            window.print();
+        }
+
+        function printPDF() {
+            if (!pdfDoc) {
+                alert('No PDF loaded to print');
+                return;
+            }
+            
+            // Create a new window for printing
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Print PDF - ${document.getElementById('pdfTitle').textContent}</title>
+                    <style>
+                        body { margin: 0; padding: 20px; }
+                        canvas { 
+                            display: block; 
+                            margin: 20px auto;
+                            max-width: 100%;
+                            page-break-after: always;
+                        }
+                        @media print {
+                            canvas { page-break-after: always; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h2 style="text-align:center;">${document.getElementById('pdfTitle').textContent}</h2>
+                    <div id="pdfPages"></div>
+                </body>
+                </html>
+            `);
+            
+            const pagesDiv = printWindow.document.getElementById('pdfPages');
+            let renderedPages = 0;
+            
+            // Render all pages
+            for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+                pdfDoc.getPage(pageNum).then(function(page) {
+                    const canvas = printWindow.document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    const viewport = page.getViewport({ scale: 1.5 });
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    
+                    const renderContext = {
+                        canvasContext: ctx,
+                        viewport: viewport
+                    };
+                    
+                    page.render(renderContext).promise.then(() => {
+                        pagesDiv.appendChild(canvas);
+                        renderedPages++;
+                        
+                        // Print when all pages are rendered
+                        if (renderedPages === totalPages) {
+                            setTimeout(() => {
+                                printWindow.focus();
+                                printWindow.print();
+                                printWindow.close();
+                            }, 500);
+                        }
+                    });
+                });
+            }
         }
 
         document.getElementById('studentEmail').addEventListener('keypress', function(e) {
