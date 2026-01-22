@@ -194,22 +194,42 @@
             body { background: white; padding: 0; }
             .container { box-shadow: none; }
             .back-btn, .print-btn, .logout-btn, .button-group { display: none !important; }
-            .marks-header { background: #1e3c72 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .summary-card { page-break-inside: avoid; }
-            .marks-table { page-break-inside: auto; }
-            .marks-table tr { page-break-inside: avoid; }
             
-            /* PDF Print Styles */
-            body * {
-                visibility: hidden !important;
-            }
-            
-            #print-container,
-            #print-container * {
+            /* Marks Card Print */
+            #marksSection {
+                display: block !important;
                 visibility: visible !important;
             }
             
-            #print-container {
+            #marksSection * {
+                visibility: visible !important;
+            }
+            
+            .marks-header { 
+                background: #1e3c72 !important; 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact; 
+            }
+            .summary-card { 
+                page-break-inside: avoid;
+                background: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .marks-table { page-break-inside: auto; }
+            .marks-table tr { page-break-inside: avoid; }
+            
+            /* PDF Print Styles - only apply when print-container has content */
+            body.printing-pdf * {
+                visibility: hidden !important;
+            }
+            
+            body.printing-pdf #print-container,
+            body.printing-pdf #print-container * {
+                visibility: visible !important;
+            }
+            
+            body.printing-pdf #print-container {
                 position: absolute !important;
                 left: 0 !important;
                 top: 0 !important;
@@ -726,6 +746,8 @@
         }
 
         function printMarks() {
+            // Ensure we're not in PDF printing mode
+            document.body.classList.remove('printing-pdf');
             window.print();
         }
 
@@ -815,8 +837,9 @@
                     // Remove progress overlay
                     document.body.removeChild(progressOverlay);
                     
-                    // Show print container
+                    // Show print container and add printing class
                     printContainer.style.display = 'block';
+                    document.body.classList.add('printing-pdf');
                     
                     // Trigger print dialog
                     setTimeout(() => {
@@ -824,6 +847,7 @@
                         
                         // Cleanup after print
                         setTimeout(() => {
+                            document.body.classList.remove('printing-pdf');
                             printContainer.style.display = 'none';
                             printContainer.innerHTML = '';
                         }, 500);
