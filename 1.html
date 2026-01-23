@@ -846,8 +846,7 @@
 
                     if (email === 'jlibiblecollege@gmail.com') {
                         document.getElementById('adminLoggedEmail').textContent = window.studentName;
-                        // Call the function from additional-features.js to show admin dashboard
-                        if (typeof window.showAdminDashboard === 'function') { // Use window.showAdminDashboard
+                        if (typeof window.showAdminDashboard === 'function') {
                             window.showAdminDashboard();
                         } else {
                             console.error("showAdminDashboard is not defined. Make sure additional-features.js is loaded correctly.");
@@ -857,6 +856,12 @@
                     } else {
                         document.getElementById('loggedEmail').textContent = window.studentName + ' (' + email + ')';
                         document.getElementById('pdfSelection').style.display = 'block';
+                        // NEW: Call the function to add buttons for the student
+                        if (typeof window.addAdditionalButtons === 'function') { // Check if function exists
+                            window.addAdditionalButtons();
+                        } else {
+                            console.error("addAdditionalButtons is not defined. Make sure additional-features.js is loaded correctly.");
+                        }
                     }
                 }, 1000);
             } else {
@@ -1086,3 +1091,4 @@
     <script src="additional-features.js"></script>
 </body>
 </html>
+
