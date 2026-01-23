@@ -19,7 +19,7 @@ const STUDENT_DATA = {
         'borde.siyona@gmail.com': { name: 'Siyona Borde', marks: [93, 100, null, null, null, null, null] },
         'manisha.fernandis15@gmail.com': { name: 'Manisha Fernandis', marks: [null, null, 70, 74, 50, null, 37] },
         'meghadhusia09june@gmail.com': { name: 'Megha Mhaske', marks: [null, 48, 100, 40, null, null, null] },
-        'ashubaladon@gmail.com': { name: 'Ashish Dongerdive', marks: [null, 70, null, null, null, null, 75] },
+        'ashubaladon@gmail.com': { name: 'Ashish Dongerdive', marks: [75, 70, null, null, null, null, null] },
         'vishforluv1982@gmail.com': { name: 'Vishwas Bhosale', marks: [62, 50, null, 100, 40, null, null] },
         'brani4211@gmail.com': { name: 'Rani Bhosale', marks: [null, null, null, null, null, null, null] }
     },
