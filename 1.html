@@ -731,7 +731,7 @@
         // WHITELIST - Authorized emails
         const ALLOWED_EMAILS = {
             'p82158860@gmail.com': 'Pritee Gaikwad',
-            'ranjeeta.kamble333@gmail.com': 'Ranjeeta Kamble',
+            'ranjeeta.kamble333@gmail.com': 'Ranjana Kamble',
             'vypardh78@gmail.com': 'Vishal Pardhe',
             'rvpardhe07@gmail.com': 'Kavita Pardhe',
             'jlibiblecollege@gmail.com': 'Bible College Admin',
@@ -799,7 +799,7 @@
         });
 
         // Function to hide all main content sections
-        function hideAllContentSections() {
+        window.hideAllContentSections = function() { // Made global for additional-features.js to access
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('pdfSelection').style.display = 'none';
             document.getElementById('pdfViewer').style.display = 'none';
@@ -842,13 +842,13 @@
                 successMsg.style.display = 'block';
                 
                 setTimeout(() => {
-                    hideAllContentSections(); // Hide all sections first
+                    window.hideAllContentSections(); // Hide all sections first
 
                     if (email === 'jlibiblecollege@gmail.com') {
                         document.getElementById('adminLoggedEmail').textContent = window.studentName;
                         // Call the function from additional-features.js to show admin dashboard
-                        if (typeof showAdminDashboard === 'function') {
-                            showAdminDashboard();
+                        if (typeof window.showAdminDashboard === 'function') { // Use window.showAdminDashboard
+                            window.showAdminDashboard();
                         } else {
                             console.error("showAdminDashboard is not defined. Make sure additional-features.js is loaded correctly.");
                             document.getElementById('adminDashboard').style.display = 'block'; // Fallback
@@ -869,7 +869,7 @@
             window.studentEmail = '';
             window.studentName = '';
             document.getElementById('studentEmail').value = '';
-            hideAllContentSections(); // Hide all current views
+            window.hideAllContentSections(); // Hide all current views
             document.getElementById('loginSection').style.display = 'block'; // Show login section
         }
 
@@ -877,7 +877,7 @@
             currentPdfId = pdfId;
             const pdfConfig = PDF_FILE_PATH[pdfId];
             
-            hideAllContentSections(); // Hide everything else
+            window.hideAllContentSections(); // Hide everything else
             document.getElementById('currentPdfTitle').textContent = pdfConfig.title;
             document.getElementById('pdfViewer').style.display = 'block';
             
@@ -885,7 +885,7 @@
         }
 
         function backToSelection() {
-            hideAllContentSections();
+            window.hideAllContentSections();
             document.getElementById('pdfSelection').style.display = 'block';
             pdfDoc = null;
             pageNum = 1;
