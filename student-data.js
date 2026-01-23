@@ -42,22 +42,6 @@ const STUDENT_DATA = {
             reference2: '',
             futurePlan: 'Preaching'
         },
-        'anilparmar31318@gmail.com': {
-            name: 'Anil Chhagan Parmar',
-            address: 'At. Post. Dhadhon, Dist. Nandurbar',
-            mobile: '9423470753',
-            dob: '11/11/1986',
-            age: 39,
-            gender: 'Male',
-            education: '12th',
-            occupation: 'Ministry',
-            marital: 'Married',
-            church: 'F.M.B.P',
-            pastor: 'Pastor Name Not Specified',
-            reference1: 'Ramesh Pavara - 7821914953',
-            reference2: '',
-            futurePlan: 'प्रभू येशूची इच्छा प्रमाणे सेवा करणे'
-        },
         'ranjeeta.kamble333@gmail.com': {
             name: 'Ranjana Sangam Kamble',
             address: 'Andheri, Mumbai',
@@ -105,22 +89,6 @@ const STUDENT_DATA = {
             reference1: 'Hendry Appa Pardhe - 8879474729',
             reference2: 'Damayanti Hendry Pardhe - 9222070542',
             futurePlan: 'To serve Lord with my family'
-        },
-        'sswarashree@gmail.com': {
-            name: 'Swarashri Hemant Satralkar',
-            address: 'Simplicity, B-8, Flat No - 104, Hande Wadi Road, Hadapsar, Pune',
-            mobile: '8888279832',
-            dob: '5/1/1966',
-            age: 58,
-            gender: 'Female',
-            education: '12th',
-            occupation: 'Business',
-            marital: 'Married',
-            church: 'KDC-CNI MIRAJ',
-            pastor: 'Rev Vishal More',
-            reference1: 'Pallavi Chopde - 9766401284',
-            reference2: 'Asavari Jadhav - 9766486986',
-            futurePlan: 'Spread the name of God, preach kingdom of God and repentance'
         },
         'manoramaramane@gmail.com': {
             name: 'Manorama Ashwin Ramane',
@@ -186,22 +154,6 @@ const STUDENT_DATA = {
             reference2: 'Reference 2 - 9763180289',
             futurePlan: 'लोकांना देवाच्या शिक्षणात ठेवणे, वाढवणे'
         },
-        'ujagarejames@gmail.com': {
-            name: 'James Shashikant Ujagare',
-            address: 'Vita 415311, Dis-Sangli, Near Church, Sangli Road',
-            mobile: '9595710004',
-            dob: '12/8/1972',
-            age: 52,
-            gender: 'Male',
-            education: 'Masters',
-            occupation: 'Business',
-            marital: 'Married',
-            church: 'Believers Church Vita',
-            pastor: 'Pastor Wilson',
-            reference1: 'Pastor Poul - 7774880375',
-            reference2: 'Soloman Andrews - 7558737074',
-            futurePlan: 'Share the word of God, serve the Lord\'s work'
-        },
         'bordeamol26@gmail.com': {
             name: 'Amol Borde',
             address: 'B202, Kute Fortune, Sainagar, Mamurdi, PCMC',
@@ -234,22 +186,6 @@ const STUDENT_DATA = {
             reference2: 'Samuel Amolik - 9604433770',
             futurePlan: 'Winning Souls for God\'s Kingdom, Church planting'
         },
-        'smitaujagare82@gmail.com': {
-            name: 'Smita James Ujagare',
-            address: 'Tasgaon Road, Vita, Near Church',
-            mobile: '9673628648',
-            dob: '9/2/1982',
-            age: 43,
-            gender: 'Female',
-            education: 'Graduate',
-            occupation: 'Business',
-            marital: 'Married',
-            church: 'Believer Church of Vita',
-            pastor: 'Pastor Wilson Ujagare',
-            reference1: 'Prashila Ujagare - 7499824703',
-            reference2: '',
-            futurePlan: 'Preaching of God'
-        },
         'dpadvi604@gmail.com': {
             name: 'Dinesh Vanya Padvi',
             address: 'At Jugani, Po Jugani, Tel Dhadgaon, Dist Nandurbar',
@@ -265,70 +201,6 @@ const STUDENT_DATA = {
             reference1: 'Ganesh Vanya Padvi - 8080107056',
             reference2: 'Vikram Vanya Padvi - 9420460782',
             futurePlan: 'देवाची सेवा करणे'
-        },
-        'truptiadhav33@gmail.com': {
-            name: 'Trupti Suhas Adhav',
-            address: 'Vadala Bahiroba, Tal. Newasa, Dist. Ahilyanagar',
-            mobile: '9130932190',
-            dob: '7/10/1997',
-            age: 27,
-            gender: 'Female',
-            education: 'Masters',
-            occupation: 'Service',
-            marital: 'Single',
-            church: 'F.M. Church Vadala Mission',
-            pastor: 'Rev. Rajanikant Salve',
-            reference1: '',
-            reference2: '',
-            futurePlan: 'लोकांना सत्य समजावे, देवाची ओळख व्हावी, त्याचं तारण व्हावे, अनेक आत्मे जिंकले जावेत'
-        },
-        'sagarmblessed@gmail.com': {
-            name: 'Sagar Mhaske',
-            address: 'A-7, Ganesh Puram, Dapodi, Opp Vineyard Workers Church, Pimpri Chinchwad',
-            mobile: '9028991883',
-            dob: '1/11/1988',
-            age: 36,
-            gender: 'Male',
-            education: '12th',
-            occupation: 'Business',
-            marital: 'Married',
-            church: 'AG Church',
-            pastor: 'Pst. Nana Dar',
-            reference1: 'Akash Mhaske - 8796726320',
-            reference2: 'Sumit Hiwale - 9762379619',
-            futurePlan: 'Walking on the vision what God has given, Being a podcast host want to touch millions'
-        },
-        'beenadhusia@gmail.com': {
-            name: 'Beena Dhusia',
-            address: 'Siddharth Nagar House No 03, Near Harrise Bridge, Dapodi, Pune, Maharashtra 411012',
-            mobile: '9960027931',
-            dob: '1/7/1969',
-            age: 55,
-            gender: 'Female',
-            education: '10th',
-            occupation: 'None',
-            marital: 'Single',
-            church: 'Emmanuel Church Assembly of God',
-            pastor: 'Pastor Name Not Specified',
-            reference1: 'Kamalkant Dhusia',
-            reference2: '',
-            futurePlan: 'Preaching Gospel'
-        },
-        'bhamnik1215@gmail.com': {
-            name: 'Bhamni Niraj Dhusia',
-            address: 'Siddharth Nagar House No 03, Near Harrise Bridge, Dapodi, Pune, Maharashtra 411012',
-            mobile: '7276220521',
-            dob: '12/15/2001',
-            age: 23,
-            gender: 'Female',
-            education: 'Graduate',
-            occupation: 'Service',
-            marital: 'Married',
-            church: 'Emmanuel Church Assembly Of God',
-            pastor: 'Pastor Nana Dhar',
-            reference1: 'Niraj Dhusia - 9860245148',
-            reference2: '',
-            futurePlan: 'Empower my faith and knowledge'
         },
         'brani4211@gmail.com': {
             name: 'Rani Vishwas Bhosale',
@@ -410,22 +282,6 @@ const STUDENT_DATA = {
             reference2: 'Nikita Hiwale - 7745811984',
             futurePlan: 'Know the plan of God in my life, Have a daily relationship with Jesus, walk with Him'
         },
-        'shwetalondhe29@gmail.com': {
-            name: 'Shweta Sudhir Londhe',
-            address: '20/8, Vastu Udyog Colony, Pimpri, Pune-18',
-            mobile: '7057009769',
-            dob: '9/29/2025',
-            age: 30,
-            gender: 'Female',
-            education: 'Masters',
-            occupation: 'Service',
-            marital: 'Divorced',
-            church: 'United Church of Christ',
-            pastor: 'Pastor Name Not Specified',
-            reference1: 'Jaya Sudhir Londhe - 8149279453',
-            reference2: 'Sudhir Ratnakar Londhe - 9130664602',
-            futurePlan: 'God\'s work'
-        },
         'ashmitgupta7787@gmail.com': {
             name: 'Sayali Thokal',
             address: 'Porwal Road',
@@ -458,6 +314,13 @@ const STUDENT_DATA = {
             reference2: '',
             futurePlan: 'To serve the Lord to work, I want to tell the Gospel to the people to the other'
         },
+        'aadamgujare@gmail.com' : { 
+            name: 'Aadam Gujare',
+            address: 'Near Marathi School, Kolhapur Haroli',
+            mobile: '9022335090',
+            gender: 'male',
+            marital: 'Married'
+        },       
         'jlibiblecollege@gmail.com': {
             name: 'Bible College Admin',
             address: 'Bible College of India',
@@ -479,3 +342,4 @@ const STUDENT_DATA = {
     // Exam months mapping
     examMonths: ['June', 'July', 'August', 'September', 'October', 'Nov-1', 'Nov-2']
 };
+
