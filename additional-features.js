@@ -4,6 +4,12 @@
 (function() {
     'use strict';
 
+    // Ensure STUDENT_DATA is available (it should be global from student-data.js)
+    if (typeof STUDENT_DATA === 'undefined') {
+        console.error('STUDENT_DATA is not defined. Make sure student-data.js is loaded before additional-features.js');
+        return;
+    }
+
     // Initialize when DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
@@ -14,25 +20,33 @@
     function init() {
         // Wait a bit for main page to load
         setTimeout(() => {
-            addAdditionalButtons();
+            // Only add student action buttons if the user is not the admin
+            if (window.studentEmail !== 'jlibiblecollege@gmail.com') {
+                addAdditionalButtons();
+            }
+
+            // If an admin logs in directly after page load (e.g., refreshing on admin page),
+            // ensure the admin dashboard is shown.
+            if (window.studentEmail === 'jlibiblecollege@gmail.com') {
+                showAdminDashboard();
+            }
         }, 500);
     }
 
-    // Add View Marksheet and Student Profile buttons
+    // Add View Marksheet and Student Profile buttons for regular students
     function addAdditionalButtons() {
         const studentInfo = document.querySelector('.student-info');
         
         if (!studentInfo) {
-            console.warn('Student info section not found');
+            // This might happen if admin is logged in, and student-info isn't displayed
             return;
         }
 
-        // Check if buttons already exist
+        // Check if buttons already exist (to prevent duplicates on re-init)
         if (document.getElementById('marksheetBtn')) {
             return;
         }
 
-        // Create buttons container
         const buttonsContainer = document.createElement('div');
         buttonsContainer.className = 'header-actions';
         buttonsContainer.style.cssText = `
@@ -44,17 +58,15 @@
 
         // Student Profile Button
         const profileBtn = createButton('profileBtn', '👤 Student Profile', '#667eea', '#764ba2');
-        profileBtn.onclick = showStudentProfile;
+        profileBtn.onclick = () => showStudentProfile(window.studentEmail); // Pass current student's email
 
         // View Marksheet Button
         const marksheetBtn = createButton('marksheetBtn', '📊 View Marksheet', '#f093fb', '#f5576c');
-        marksheetBtn.onclick = showMarksheet;
+        marksheetBtn.onclick = () => showMarksheet(window.studentEmail); // Pass current student's email
 
-        // Append buttons
         buttonsContainer.appendChild(profileBtn);
         buttonsContainer.appendChild(marksheetBtn);
 
-        // Insert before logout button
         const logoutBtn = studentInfo.querySelector('.logout-btn');
         if (logoutBtn) {
             studentInfo.insertBefore(buttonsContainer, logoutBtn);
@@ -67,11 +79,11 @@
     function createButton(id, text, color1, color2) {
         const btn = document.createElement('button');
         btn.id = id;
-        btn.className = 'action-btn';
+        btn.className = 'action-btn'; // Using a generic class here, inline styles will override
         btn.innerHTML = text;
         btn.style.cssText = `
             padding: 10px 20px;
-            background: linear-gradient(135deg, ${color1} 0%, ${color2} 100%);
+            background: linear-gradient(135deg, $${color1} 0%, $${color2} 100%);
             color: white;
             border: none;
             border-radius: 8px;
@@ -81,6 +93,7 @@
             transition: all 0.3s;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            white-space: nowrap; /* Prevent text wrapping */
         `;
 
         btn.onmouseenter = function() {
@@ -96,25 +109,25 @@
         return btn;
     }
 
-    // Show Student Marksheet
-    function showMarksheet() {
-        const email = window.studentEmail;
-        
+    /**
+     * Shows the marksheet for a given student email.
+     * @param {string} email The email of the student whose marksheet is to be displayed.
+     */
+    window.showMarksheet = function(email) { // Made global to be called from admin dashboard
         if (!email) {
-            alert('Please login first');
+            alert('Student email not provided.');
             return;
         }
 
         const studentData = STUDENT_DATA.marks[email];
         
         if (!studentData) {
-            alert('No marksheet data available for your account');
+            alert('No marksheet data available for this student: ' + email);
             return;
         }
 
-        // Hide current sections
-        document.getElementById('pdfSelection').style.display = 'none';
-        document.getElementById('pdfViewer').style.display = 'none';
+        // Hide all other main content sections
+        window.hideAllContentSections();
         
         // Create or show marksheet section
         let marksheetSection = document.getElementById('marksheetSection');
@@ -127,7 +140,7 @@
         // Populate marksheet with data
         populateMarksheet(studentData, email);
         marksheetSection.style.display = 'block';
-    }
+    };
 
     // Create Marksheet HTML Structure
     function createMarksheetSection() {
@@ -137,7 +150,7 @@
         
         section.innerHTML = `
             <div class="back-btn-container" style="margin-bottom: 20px;">
-                <button class="back-btn" onclick="backToDashboardFromMarksheet()" style="
+                <button class="back-btn" onclick="window.backToDashboardFromMarksheet()" style="
                     padding: 10px 20px;
                     background: #6c757d;
                     color: white;
@@ -161,6 +174,7 @@
                 <div style="font-size: 3em; margin-bottom: 10px;">📊</div>
                 <h2 style="font-size: 2em; margin-bottom: 10px;">Academic Performance</h2>
                 <p id="marksheet-student-name" style="font-size: 1.3em; opacity: 0.95;"></p>
+                <p id="marksheet-student-email-display" style="font-size: 1em; opacity: 0.8;"></p>
             </div>
 
             <div class="summary-cards" style="
@@ -280,6 +294,7 @@
 
         // Update summary cards
         document.getElementById('marksheet-student-name').textContent = studentData.name;
+        document.getElementById('marksheet-student-email-display').textContent = email; // Display email
         document.getElementById('total-marks').textContent = totalMarks;
         document.getElementById('exams-taken').textContent = `${examsTaken}/7`;
         document.getElementById('average-score').textContent = average;
@@ -317,10 +332,10 @@
 
             row.innerHTML = `
                 <td style="padding: 15px; font-weight: 600;">${examMonth}</td>
-                <td style="padding: 15px; text-align: center; color: ${markColor}; font-weight: 700; font-size: 1.1em;">${markValue}</td>
+                <td style="padding: 15px; text-align: center; color: $${markColor}; font-weight: 700; font-size: 1.1em;">$${markValue}</td>
                 <td style="padding: 15px; text-align: center;">${outOf}</td>
                 <td style="padding: 15px; text-align: center; font-weight: 600;">${examPercentage}</td>
-                <td style="padding: 15px; text-align: center; font-weight: 600; color: ${markColor};">${status}</td>
+                <td style="padding: 15px; text-align: center; font-weight: 600; color: $${markColor};">$${status}</td>
             `;
 
             tableBody.appendChild(row);
@@ -329,6 +344,7 @@
 
     // Calculate Grade
     function calculateGrade(percentage) {
+        if (percentage === null) return 'N/A';
         if (percentage >= 90) return 'A+';
         else if (percentage >= 80) return 'A';
         else if (percentage >= 70) return 'B+';
@@ -346,27 +362,25 @@
         return 'Needs Improvement';
     }
 
-    // Show Student Profile
-    function showStudentProfile() {
-        const email = window.studentEmail;
-        
+    /**
+     * Shows the student profile for a given student email.
+     * @param {string} email The email of the student whose profile is to be displayed.
+     */
+    window.showStudentProfile = function(email) { // Made global to be called from admin dashboard
         if (!email) {
-            alert('Please login first');
+            alert('Student email not provided.');
             return;
         }
 
         const profileData = STUDENT_DATA.profiles[email];
         
         if (!profileData) {
-            alert('No profile data available for your account');
+            alert('No profile data available for this student: ' + email);
             return;
         }
 
-        // Hide current sections
-        document.getElementById('pdfSelection').style.display = 'none';
-        document.getElementById('pdfViewer').style.display = 'none';
-        const marksheetSection = document.getElementById('marksheetSection');
-        if (marksheetSection) marksheetSection.style.display = 'none';
+        // Hide all other main content sections
+        window.hideAllContentSections();
         
         // Create or show profile section
         let profileSection = document.getElementById('profileSection');
@@ -377,9 +391,9 @@
         }
 
         // Populate profile with data
-        populateProfile(profileData);
+        populateProfile(profileData, email);
         profileSection.style.display = 'block';
-    }
+    };
 
     // Create Profile HTML Structure
     function createProfileSection() {
@@ -389,7 +403,7 @@
         
         section.innerHTML = `
             <div class="back-btn-container" style="margin-bottom: 20px;">
-                <button class="back-btn" onclick="backToDashboardFromProfile()" style="
+                <button class="back-btn" onclick="window.backToDashboardFromProfile()" style="
                     padding: 10px 20px;
                     background: #6c757d;
                     color: white;
@@ -412,7 +426,7 @@
             ">
                 <div style="font-size: 5em; margin-bottom: 15px;">👤</div>
                 <h2 id="profile-student-name" style="font-size: 2.2em; margin-bottom: 10px; font-weight: 700;">Student Name</h2>
-                <p id="profile-student-email" style="font-size: 1.1em; opacity: 0.9;"></p>
+                <p id="profile-student-email-display" style="font-size: 1.1em; opacity: 0.9;"></p>
             </div>
 
             <div class="profile-cards" style="
@@ -477,10 +491,10 @@
     }
 
     // Populate Profile with Student Data
-    function populateProfile(profileData) {
+    function populateProfile(profileData, email) {
         // Header
         document.getElementById('profile-student-name').textContent = profileData.name;
-        document.getElementById('profile-student-email').textContent = window.studentEmail;
+        document.getElementById('profile-student-email-display').textContent = email; // Display email
 
         // Personal Information
         const personalInfo = document.getElementById('personal-info');
@@ -529,15 +543,66 @@
         `;
     }
 
-    // Global functions for navigation
-    window.backToDashboardFromMarksheet = function() {
-        document.getElementById('marksheetSection').style.display = 'none';
-        document.getElementById('pdfSelection').style.display = 'block';
+    // --- ADMIN DASHBOARD FUNCTIONS ---
+    /**
+     * Shows the admin dashboard and populates the student list.
+     */
+    window.showAdminDashboard = function() {
+        window.hideAllContentSections(); // Hide everything else
+        document.getElementById('adminDashboard').style.display = 'block';
+        populateAdminStudentList();
     };
 
+    /**
+     * Populates the list of students in the admin dashboard.
+     */
+    function populateAdminStudentList() {
+        const studentListContainer = document.getElementById('studentList');
+        studentListContainer.innerHTML = ''; // Clear existing list
+
+        // Get all student emails from profiles data (excluding admin itself)
+        const studentEmails = Object.keys(STUDENT_DATA.profiles).filter(
+            email => email !== 'jlibiblecollege@gmail.com'
+        );
+
+        studentEmails.forEach(email => {
+            const profile = STUDENT_DATA.profiles[email];
+            const marks = STUDENT_DATA.marks[email]; // Get marks if available
+
+            const studentCard = document.createElement('div');
+            studentCard.className = 'student-card';
+            studentCard.innerHTML = `
+                <h3>${profile ? profile.name : email}</h3>
+                <p>${email}</p>
+                <div class="student-card-actions">
+                    <button class="btn-view-profile" onclick="window.showStudentProfile('${email}')">View Profile</button>
+                    $${marks ? `<button class="btn-view-marksheet" onclick="window.showMarksheet('$${email}')">View Marksheet</button>` : ''}
+                </div>
+            `;
+            studentListContainer.appendChild(studentCard);
+        });
+    }
+
+    // --- GLOBAL NAVIGATION FUNCTIONS ---
+
+    // Modified back button for marksheet view
+    window.backToDashboardFromMarksheet = function() {
+        document.getElementById('marksheetSection').style.display = 'none';
+        if (window.studentEmail === 'jlibiblecollege@gmail.com') {
+            window.showAdminDashboard(); // Back to admin dashboard
+        } else {
+            document.getElementById('pdfSelection').style.display = 'block'; // Back to student PDF selection
+        }
+    };
+
+    // Modified back button for profile view
     window.backToDashboardFromProfile = function() {
         document.getElementById('profileSection').style.display = 'none';
-        document.getElementById('pdfSelection').style.display = 'block';
+        if (window.studentEmail === 'jlibiblecollege@gmail.com') {
+            window.showAdminDashboard(); // Back to admin dashboard
+        } else {
+            document.getElementById('pdfSelection').style.display = 'block'; // Back to student PDF selection
+        }
     };
 
 })();
