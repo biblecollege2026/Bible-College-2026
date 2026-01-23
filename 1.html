@@ -200,6 +200,27 @@
             color: #1b5e20;
             font-weight: 600;
         }
+        /* Style for the new action buttons */
+        .action-btn {
+            width: auto;
+            padding: 10px 20px;
+            background: #007bff; /* A blue color for differentiation */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3); /* Matching shadow */
+        }
+
 
         .logout-btn {
             width: auto;
@@ -528,6 +549,9 @@
                 <div class="student-info-text">
                     ✅ Logged in as: <span id="loggedEmail"></span>
                 </div>
+                <!-- New buttons added here -->
+                <button class="action-btn" onclick="viewMarksheet()">View Marksheet</button>
+                <button class="action-btn" onclick="viewStudentProfile()">Student Profile</button>
                 <button class="logout-btn" onclick="logout()">Logout</button>
             </div>
 
@@ -843,7 +867,7 @@
             const pdfConfig = PDF_FILE_PATH[currentPdfId];
             const totalPages = pdfDoc.numPages;
             
-            if (!confirm(`Print all ${totalPages} pages of "${pdfConfig.title}"?\n\nThis will prepare all pages for printing.`)) {
+            if (!confirm(`Print all $${totalPages} pages of "$${pdfConfig.title}"?\n\nThis will prepare all pages for printing.`)) {
                 return;
             }
 
@@ -909,7 +933,7 @@
                         progressFill.textContent = progress + '%';
                     }
                     if (progressText) {
-                        progressText.textContent = `Loading page ${i} of ${totalPages}`;
+                        progressText.textContent = `Loading page $${i} of $${totalPages}`;
                     }
                 }
                 
@@ -941,14 +965,21 @@
                 printBtn.textContent = '🖨️ Print This Chapter';
             }
         }
+
+        // Placeholder functions for the new buttons
+        function viewMarksheet() {
+            alert("This button will eventually show the student's marksheet.");
+            // Implement your marksheet viewing logic here.
+            // This might involve fetching data from a server and displaying it.
+        }
+
+        function viewStudentProfile() {
+            alert("This button will eventually show the student's profile information.");
+            // Implement your student profile viewing logic here.
+            // This might involve fetching data from a server and displaying it.
+        }
     </script>
        <script src="student-data.js"></script>
     <script src="additional-features.js"></script>
 </body>
 </html>
-
-
-
-
-
-
