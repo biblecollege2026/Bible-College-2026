@@ -21,14 +21,15 @@
         // Wait a bit for main page to load
         setTimeout(() => {
             // Only add student action buttons if the user is not the admin
-            if (window.studentEmail !== 'jlibiblecollege@gmail.com') {
+            if (window.studentEmail && window.studentEmail !== 'jlibiblecollege@gmail.com') { // Check if studentEmail is set and not admin
                 addAdditionalButtons();
             }
 
             // If an admin logs in directly after page load (e.g., refreshing on admin page),
             // ensure the admin dashboard is shown.
-            if (window.studentEmail === 'jlibiblecollege@gmail.com') {
-                showAdminDashboard();
+            // This check ensures a quick display if the admin is already logged in and refreshes
+            if (window.studentEmail === 'jlibiblecollege@gmail.com' && document.getElementById('adminDashboard').style.display !== 'block') {
+                window.showAdminDashboard();
             }
         }, 500);
     }
@@ -58,11 +59,11 @@
 
         // Student Profile Button
         const profileBtn = createButton('profileBtn', '👤 Student Profile', '#667eea', '#764ba2');
-        profileBtn.onclick = () => showStudentProfile(window.studentEmail); // Pass current student's email
+        profileBtn.onclick = () => window.showStudentProfile(window.studentEmail); // Pass current student's email
 
         // View Marksheet Button
         const marksheetBtn = createButton('marksheetBtn', '📊 View Marksheet', '#f093fb', '#f5576c');
-        marksheetBtn.onclick = () => showMarksheet(window.studentEmail); // Pass current student's email
+        marksheetBtn.onclick = () => window.showMarksheet(window.studentEmail); // Pass current student's email
 
         buttonsContainer.appendChild(profileBtn);
         buttonsContainer.appendChild(marksheetBtn);
@@ -296,7 +297,7 @@
         document.getElementById('marksheet-student-name').textContent = studentData.name;
         document.getElementById('marksheet-student-email-display').textContent = email; // Display email
         document.getElementById('total-marks').textContent = totalMarks;
-        document.getElementById('exams-taken').textContent = `${examsTaken}/7`;
+        document.getElementById('exams-taken').textContent = `$${examsTaken}/$${examMonths.length}`; // Dynamic total
         document.getElementById('average-score').textContent = average;
         document.getElementById('percentage-score').textContent = percentage + '%';
         document.getElementById('grade-display').textContent = grade;
@@ -344,7 +345,7 @@
 
     // Calculate Grade
     function calculateGrade(percentage) {
-        if (percentage === null) return 'N/A';
+        if (percentage === null || isNaN(percentage)) return 'N/A';
         if (percentage >= 90) return 'A+';
         else if (percentage >= 80) return 'A';
         else if (percentage >= 70) return 'B+';
@@ -576,7 +577,7 @@
                 <p>${email}</p>
                 <div class="student-card-actions">
                     <button class="btn-view-profile" onclick="window.showStudentProfile('${email}')">View Profile</button>
-                    $${marks ? `<button class="btn-view-marksheet" onclick="window.showMarksheet('$${email}')">View Marksheet</button>` : ''}
+                    $${marks && marks.marks && marks.marks.length > 0 ? `<button class="btn-view-marksheet" onclick="window.showMarksheet('$${email}')">View Marksheet</button>` : ''}
                 </div>
             `;
             studentListContainer.appendChild(studentCard);
