@@ -172,71 +172,48 @@
                 <p id="marksheet-student-email-display" style="font-size: 1em; opacity: 0.8;"></p>
             </div>
 
-            <div class="summary-cards" style="
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                gap: 20px;
-                margin-bottom: 30px;
-            ">
-                <div class="summary-card" style="
-                    background: white;
-                    padding: 25px;
-                    border-radius: 10px;
-                    text-align: center;
-                    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-                    border-left: 5px solid #2196f3;
-                ">
-                    <div style="color: #666; font-size: 0.85em; margin-bottom: 8px; text-transform: uppercase; font-weight: 600;">TOTAL MARKS</div>
-                    <div id="total-marks" style="color: #2196f3; font-size: 2.5em; font-weight: 700;">0</div>
-                </div>
+           <div class="summary-cards" style="
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+">
+    <div class="summary-card" style="
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        border-left: 5px solid #9c27b0;
+    ">
+        <div style="color: #666; font-size: 0.85em; margin-bottom: 8px; text-transform: uppercase; font-weight: 600;">EXAMS TAKEN</div>
+        <div id="exams-taken" style="color: #9c27b0; font-size: 2.5em; font-weight: 700;">0/7</div>
+    </div>
 
-                <div class="summary-card" style="
-                    background: white;
-                    padding: 25px;
-                    border-radius: 10px;
-                    text-align: center;
-                    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-                    border-left: 5px solid #9c27b0;
-                ">
-                    <div style="color: #666; font-size: 0.85em; margin-bottom: 8px; text-transform: uppercase; font-weight: 600;">EXAMS TAKEN</div>
-                    <div id="exams-taken" style="color: #9c27b0; font-size: 2.5em; font-weight: 700;">0/7</div>
-                </div>
+    <div class="summary-card" style="
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        border-left: 5px solid #4caf50;
+    ">
+        <div style="color: #666; font-size: 0.85em; margin-bottom: 8px; text-transform: uppercase; font-weight: 600;">PERCENTAGE</div>
+        <div id="percentage-score" style="color: #4caf50; font-size: 2.5em; font-weight: 700;">0%</div>
+    </div>
 
-                <div class="summary-card" style="
-                    background: white;
-                    padding: 25px;
-                    border-radius: 10px;
-                    text-align: center;
-                    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-                    border-left: 5px solid #ff9800;
-                ">
-               <div style="color: #666; font-size: 0.85em; margin-bottom: 8px; text-transform: uppercase; font-weight: 600;">AVERAGE</div>
-                 <div id="average-score" style="color: #ff9800; font-size: 2.5em; font-weight: 700;">0</div>
-               </div>
+    <div class="summary-card" style="
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        border-left: 5px solid #f44336;
+    ">
+        <div style="color: #666; font-size: 0.85em; margin-bottom: 8px; text-transform: uppercase; font-weight: 600;">GRADE</div>
+        <div id="grade-display" style="color: #4caf50; font-size: 2.5em; font-weight: 700;">A+</div>
+    </div>
 
-                <div class="summary-card" style="
-                    background: white;
-                    padding: 25px;
-                    border-radius: 10px;
-                    text-align: center;
-                    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-                    border-left: 5px solid #4caf50;
-                ">
-                    <div style="color: #666; font-size: 0.85em; margin-bottom: 8px; text-transform: uppercase; font-weight: 600;">PERCENTAGE</div>
-                    <div id="percentage-score" style="color: #4caf50; font-size: 2.5em; font-weight: 700;">0%</div>
-                </div>
-
-                <div class="summary-card" style="
-                    background: white;
-                    padding: 25px;
-                    border-radius: 10px;
-                    text-align: center;
-                    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-                    border-left: 5px solid #f44336;
-                ">
-                    <div style="color: #666; font-size: 0.85em; margin-bottom: 8px; text-transform: uppercase; font-weight: 600;">GRADE</div>
-                    <div id="grade-display" style="color: #4caf50; font-size: 2.5em; font-weight: 700;">A+</div>
-                </div>
             </div>
 
             <div class="marks-table-container" style="
@@ -601,6 +578,7 @@
     };
 
 })();
+
 
 
 
