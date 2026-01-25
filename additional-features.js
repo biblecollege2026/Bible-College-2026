@@ -345,7 +345,7 @@
         else if (percentage >= 70) return 'B+';
         else if (percentage >= 60) return 'B';
         else if (percentage >= 35) return 'C';
-        else return 'F';
+        else return 'Needs Improvement';
     }
 
     // Get Status based on marks
@@ -601,6 +601,7 @@
     };
 
 })();
+
 
 
 
