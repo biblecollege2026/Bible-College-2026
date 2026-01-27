@@ -269,25 +269,28 @@
                     <tbody id="marks-table-body"></tbody>
                 </table>
 
-                <div style="display: flex; justify-content: space-around; align-items: flex-end; margin-top: 40px; padding: 0 10px;">
-                    <div style="text-align: center; width: 260px; display: flex; flex-direction: column; align-items: center;">
-                        <img src="sign with stamp.png" style="width: 220px; margin-bottom: 5px;">
-                        <div style="width: 200px; height: 2px; background-color: #1e3c72; margin-bottom: 5px;"></div>
-                        <div style="font-weight: bold; font-size: 0.95em; color: #1e3c72;">
-                            Prabha Sadanand Amolik<br>
-                            <span style="font-size: 0.75em; color: #666; font-weight: normal;">DIRECTOR</span>
-                        </div>
-                    </div>
-                    <div style="text-align: center; width: 260px; display: flex; flex-direction: column; align-items: center;">
-                        <img src="DIGITAL STAMP.jpeg" style="width: 220px; margin-bottom: 5px;">
-                        <div style="width: 200px; height: 2px; background-color: #1e3c72; margin-bottom: 5px;"></div>
-                        <div style="font-weight: bold; font-size: 0.95em; color: #1e3c72;">
-                            Sadanand Shamrao Amolik<br>
-                            <span style="font-size: 0.75em; color: #666; font-weight: normal;">DIRECTOR</span>
-                        </div>
-                    </div>
-                </div>
+               <div style="display: flex; justify-content: space-around; align-items: flex-end;">
+        
+        <div style="text-align: center; width: 220px; display: flex; flex-direction: column; align-items: center;">
+            <img src="sign with stamp.png" style="width: 140px; height: auto; margin-bottom: 2px;">
+            <div style="width: 180px; height: 2px; background-color: #1e3c72; margin-bottom: 5px;"></div>
+            <div style="font-weight: bold; font-size: 0.85em; color: #1e3c72; line-height: 1.2;">
+                Prabha Sadanand Amolik<br>
+                <span style="font-size: 0.7em; color: #666; font-weight: normal;">DIRECTOR</span>
             </div>
+        </div>
+
+        <div style="text-align: center; width: 220px; display: flex; flex-direction: column; align-items: center;">
+            <img src="DIGITAL STAMP.jpeg" style="width: 140px; height: auto; margin-bottom: 2px;">
+            <div style="width: 180px; height: 2px; background-color: #1e3c72; margin-bottom: 5px;"></div>
+            <div style="font-weight: bold; font-size: 0.85em; color: #1e3c72; line-height: 1.2;">
+                Sadanand Shamrao Amolik<br>
+                <span style="font-size: 0.7em; color: #666; font-weight: normal;">DIRECTOR</span>
+            </div>
+        </div>
+
+    </div>
+</div>
         `;
         return section;
     }
