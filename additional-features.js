@@ -407,10 +407,13 @@
         margin: 0 auto 15px auto; 
         border: 3px solid #fff; 
         box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
-        font-size: 1em; 
+        font-size: 1rem; 
         text-transform: uppercase;
+        font-family: 'Segoe UI', Roboto, Arial, sans-serif; /* Added for alignment */
     `;
-    badge.innerHTML = `🏆 TOP ${rank} RANK`;
+
+    // Wrap the rank in a span to control its vertical behavior
+    badge.innerHTML = `🏆 TOP <span style="margin: 0 5px; display: inline-block; line-height: 1;">${rank}</span> RANK`;
     rankContainer.appendChild(badge);
 }
 
