@@ -421,6 +421,7 @@
 }
 
         // Update Final UI with alignment fixes
+        console.log("studentProfileData:", studentProfileData); // Add this line
         document.getElementById('marksheet-student-name').textContent = studentProfileData.name;
         document.getElementById('marksheet-student-email-display').textContent = email;
         document.getElementById('online-exams-taken').textContent = `${onlineExamsTaken}/7`;
