@@ -288,7 +288,7 @@ const STUDENT_DATA = {
             reference2: 'Nikita Hiwale - 7745811984',
             futurePlan: 'Know the plan of God in my life, Have a daily relationship with Jesus, walk with Him'
         },
-        'michaelsalvi9324@gmail.comm': {
+        'michaelsalvi9324@gmail.com': {
             name: 'Michael Salvi',
             address: 'Jeevan Sinhha Co-op Housing Society, Ramne Sitaram Chawl, Parvati Paytha East, Pune-9, Behind Bharat Petrol Pump, 4th Floor',
             mobile: '9730524015',
