@@ -615,44 +615,12 @@
                 margin: 0.5cm;
             }
             
+            /* Hide everything by default */
             body * {
                 visibility: hidden !important;
             }
             
-            #print-container,
-            #print-container * {
-                visibility: visible !important;
-            }
-            
-            #print-container {
-                position: absolute !important;
-                left: 0 !important;
-                top: 0 !important;
-                width: 100% !important;
-                display: block !important;
-            }
-            
-            .print-page {
-                page-break-after: always !important;
-                page-break-inside: avoid !important;
-                display: block !important;
-                width: 100% !important;
-                margin: 0 auto !important;
-                padding: 0 !important;
-            }
-            
-            .print-page:last-child {
-                page-break-after: avoid !important;
-            }
-
-            .print-page img {
-                max-width: 100% !important;
-                height: auto !important;
-                display: block !important;
-                margin: 0 auto !important;
-            }
-            
-            /* Marksheet specific styles */
+            /* Show only marksheet when printing marksheet */
             #marksheet-to-print,
             #marksheet-to-print * {
                 visibility: visible !important;
@@ -1125,112 +1093,46 @@
             queueRenderPage(pageNum);
         }
 
-        async function printPDF() {
+        function printPDF() {
             if (!pdfDoc) {
                 alert('PDF not loaded yet');
                 return;
             }
             
             const pdfConfig = PDF_FILE_PATH[currentPdfId];
-            const totalPages = pdfDoc.numPages;
             
-            if (!confirm(`Print all ${totalPages} pages of "${pdfConfig.title}"?\n\nThis will prepare all pages for printing.`)) {
+            if (!confirm(`Print "${pdfConfig.title}"?`)) {
                 return;
             }
 
-            const printBtn = document.getElementById('printBtn');
-            printBtn.disabled = true;
-            printBtn.textContent = '⏳ Preparing pages...';
-
-            // Create progress overlay
-            const progressOverlay = document.createElement('div');
-            progressOverlay.className = 'print-progress';
-            progressOverlay.innerHTML = `
-                <h3>🖨️ Preparing Document for Print</h3>
-                <p>Please wait while all pages are loaded...</p>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill" style="width: 0%">0%</div>
-                </div>
-                <p id="progressText">Loading page 1 of ${totalPages}</p>
-            `;
-            document.body.appendChild(progressOverlay);
-
-            const printContainer = document.getElementById('print-container');
-            printContainer.innerHTML = '';
-
-            try {
-                // Render all pages to images
-                for (let i = 1; i <= totalPages; i++) {
-                    const page = await pdfDoc.getPage(i);
-                    
-                    // Scale for print quality (2.0 for good quality)
-                    const viewport = page.getViewport({scale: 2.0});
-                    
-                    // Create canvas for this page
-                    const printCanvas = document.createElement('canvas');
-                    printCanvas.width = viewport.width;
-                    printCanvas.height = viewport.height;
-                    
-                    const printCtx = printCanvas.getContext('2d');
-                    
-                    // Render page to canvas
-                    await page.render({
-                        canvasContext: printCtx,
-                        viewport: viewport
-                    }).promise;
-                    
-                    // Convert canvas to image
-                    const imgData = printCanvas.toDataURL('image/png');
-                    
-                    // Create image element
-                    const img = document.createElement('img');
-                    img.src = imgData;
-                    img.className = 'print-page';
-                    img.alt = `Page ${i}`;
-                    
-                    printContainer.appendChild(img);
-                    
-                    // Update progress
-                    const progress = Math.round((i / totalPages) * 100);
-                    const progressFill = document.getElementById('progressFill');
-                    const progressText = document.getElementById('progressText');
-                    
-                    if (progressFill) {
-                        progressFill.style.width = progress + '%';
-                        progressFill.textContent = progress + '%';
-                    }
-                    if (progressText) {
-                        progressText.textContent = `Loading page ${i} of ${totalPages}`;
-                    }
+            // Open the PDF in a new window and trigger print
+            const pdfUrl = pdfConfig.file;
+            
+            // Create an iframe to load the PDF
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.right = '0';
+            iframe.style.bottom = '0';
+            iframe.style.width = '0';
+            iframe.style.height = '0';
+            iframe.style.border = 'none';
+            
+            iframe.onload = function() {
+                try {
+                    iframe.contentWindow.print();
+                } catch (e) {
+                    // Fallback: open in new window
+                    window.open(pdfUrl, '_blank');
                 }
-                
-                // Remove progress overlay
-                document.body.removeChild(progressOverlay);
-                
-                // Show print container
-                printContainer.style.display = 'block';
-                
-                // Small delay to ensure images are ready
-                setTimeout(() => {
-                    // Trigger print dialog
-                    window.print();
-                    
-                    // Cleanup after print
-                    setTimeout(() => {
-                        printContainer.style.display = 'none';
-                        printContainer.innerHTML = '';
-                        printBtn.disabled = false;
-                        printBtn.textContent = '🖨️ Print This Chapter';
-                    }, 500);
-                }, 500);
-                
-            } catch (error) {
-                console.error('Print error:', error);
-                alert('Error preparing document for printing. Please try again.');
-                document.body.removeChild(progressOverlay);
-                printBtn.disabled = false;
-                printBtn.textContent = '🖨️ Print This Chapter';
-            }
+            };
+            
+            iframe.src = pdfUrl;
+            document.body.appendChild(iframe);
+            
+            // Remove iframe after printing
+            setTimeout(() => {
+                document.body.removeChild(iframe);
+            }, 1000);
         }
     </script>
     
