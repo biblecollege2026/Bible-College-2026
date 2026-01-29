@@ -609,34 +609,50 @@
         }
 
 
-         @media print {
-            @page {
-                size: A4;
-                margin: 0.5cm;
-            }
-            
-            /* Hide everything by default */
-            body * {
-                visibility: hidden !important;
-            }
-            
-            /* Show only marksheet when printing marksheet */
-            #marksheet-to-print,
-            #marksheet-to-print * {
-                visibility: visible !important;
-            }
-            
-            #marksheet-to-print {
-                position: absolute !important;
-                left: 0 !important;
-                top: 0 !important;
-                width: 100% !important;
-                padding: 10px !important;
-                display: block !important;
-                max-height: 98vh;
-                overflow: hidden;
-            }
-        }
+       @media print {
+    @page {
+        size: A4;
+        margin: 0;
+    }
+    
+    /* Hide the UI elements using display instead of visibility */
+    body > *:not(#print-container):not(.print-shield) {
+        display: none !important;
+    }
+
+    /* Ensure the print container is visible and fills the page */
+    #print-container {
+        display: block !important;
+        visibility: visible !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+    }
+
+    .print-page {
+        display: block !important;
+        page-break-after: always !important;
+        width: 100% !important;
+    }
+
+    /* The Shield: Digital PDF drivers capture this white layer. 
+       Physical printers typically bypass it due to the low opacity. */
+    .print-shield {
+        display: block !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: white !important;
+        z-index: 9999 !important;
+        opacity: 0.01 !important;
+    }
+}
+
+/* Ensure shield is hidden during normal web browsing */
+.print-shield { display: none; }
 
 
         @media (max-width: 768px) {
@@ -1093,47 +1109,63 @@
             queueRenderPage(pageNum);
         }
 
-        function printPDF() {
-            if (!pdfDoc) {
-                alert('PDF not loaded yet');
-                return;
-            }
-            
-            const pdfConfig = PDF_FILE_PATH[currentPdfId];
-            
-            if (!confirm(`Print "${pdfConfig.title}"?`)) {
-                return;
-            }
+      async function printPDF() {
+    if (!pdfDoc) return alert('PDF not loaded yet');
+    
+    const totalPages = pdfDoc.numPages;
+    const printBtn = document.getElementById('printBtn');
+    printBtn.disabled = true;
+    printBtn.textContent = '⏳ Security Processing...';
 
-            // Open the PDF in a new window and trigger print
-            const pdfUrl = pdfConfig.file;
+    const printContainer = document.getElementById('print-container');
+    printContainer.innerHTML = '';
+    
+    // Create the security shield for this print session
+    const shield = document.createElement('div');
+    shield.className = 'print-shield';
+    document.body.appendChild(shield);
+
+    try {
+        for (let i = 1; i <= totalPages; i++) {
+            const page = await pdfDoc.getPage(i);
+            const viewport = page.getViewport({scale: 2.0});
             
-            // Create an iframe to load the PDF
-            const iframe = document.createElement('iframe');
-            iframe.style.position = 'fixed';
-            iframe.style.right = '0';
-            iframe.style.bottom = '0';
-            iframe.style.width = '0';
-            iframe.style.height = '0';
-            iframe.style.border = 'none';
+            const printCanvas = document.createElement('canvas');
+            const printCtx = printCanvas.getContext('2d');
+            printCanvas.width = viewport.width;
+            printCanvas.height = viewport.height;
             
-            iframe.onload = function() {
-                try {
-                    iframe.contentWindow.print();
-                } catch (e) {
-                    // Fallback: open in new window
-                    window.open(pdfUrl, '_blank');
-                }
-            };
+            await page.render({canvasContext: printCtx, viewport: viewport}).promise;
             
-            iframe.src = pdfUrl;
-            document.body.appendChild(iframe);
-            
-            // Remove iframe after printing
-            setTimeout(() => {
-                document.body.removeChild(iframe);
-            }, 1000);
+            const img = document.createElement('img');
+            img.src = printCanvas.toDataURL('image/png');
+            img.className = 'print-page';
+            printContainer.appendChild(img);
         }
+
+        // Show the container so the browser renders the images
+        printContainer.style.display = 'block';
+
+        // 1-second delay ensures the browser "sees" the images before printing
+        setTimeout(() => {
+            window.print();
+            
+            // Cleanup after the print dialog is closed
+            setTimeout(() => {
+                printContainer.style.display = 'none';
+                printContainer.innerHTML = '';
+                if (document.body.contains(shield)) document.body.removeChild(shield);
+                printBtn.disabled = false;
+                printBtn.textContent = '🖨️ Print This Chapter';
+            }, 1000);
+        }, 1000);
+        
+    } catch (error) {
+        console.error('Print error:', error);
+        if (document.body.contains(shield)) document.body.removeChild(shield);
+        printBtn.disabled = false;
+    }
+}
     </script>
     
 </body>
