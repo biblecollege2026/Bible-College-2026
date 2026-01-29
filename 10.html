@@ -609,13 +609,13 @@
         }
 
 
-        @media print {
-    /* Hide everything on the page by default */
+       @media print {
+    /* 1. Hide the entire UI */
     body * {
         visibility: hidden !important;
     }
 
-    /* Target ONLY the print container and the images inside it */
+    /* 2. Force the Print Container and Marksheet to be visible */
     #print-container, 
     #print-container img,
     #marksheet-to-print,
@@ -624,7 +624,7 @@
         display: block !important;
     }
 
-    /* Position the print container at the very top of the printed page */
+    /* 3. Position the container at the absolute top-left of the page */
     #print-container {
         position: absolute !important;
         left: 0 !important;
@@ -632,22 +632,23 @@
         width: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
+        background: white !important;
     }
 
+    /* 4. Ensure images take up the full page width and break correctly */
     .print-page {
         width: 100% !important;
+        height: auto !important;
         page-break-after: always !important;
         page-break-inside: avoid !important;
-        margin-bottom: 0 !important;
+        display: block !important;
     }
 
-    /* Hide the main container entirely so it doesn't create blank space */
+    /* 5. Hide the main app container so it doesn't leave blank pages */
     .container {
         display: none !important;
     }
 }
-
-
         @media (max-width: 768px) {
             .pdf-cards {
                 grid-template-columns: 1fr;
@@ -1102,7 +1103,7 @@
             queueRenderPage(pageNum);
         }
 
-     async function printPDF() {
+ async function printPDF() {
     if (!pdfDoc) {
         alert('PDF not loaded yet');
         return;
@@ -1111,61 +1112,54 @@
     const pdfConfig = PDF_FILE_PATH[currentPdfId];
     const totalPages = pdfDoc.numPages;
     
-    if (!confirm(`Prepare all ${totalPages} pages for printing?`)) return;
+    if (!confirm(`Print all ${totalPages} pages of "${pdfConfig.title}"?`)) {
+        return;
+    }
 
     const printBtn = document.getElementById('printBtn');
     printBtn.disabled = true;
     printBtn.textContent = '⏳ Preparing...';
 
-    // Create progress overlay
-    const progressOverlay = document.createElement('div');
-    progressOverlay.className = 'print-progress';
-    document.body.appendChild(progressOverlay);
-
     const printContainer = document.getElementById('print-container');
     printContainer.innerHTML = '';
-    printContainer.style.display = 'block'; // Must be block for browser to 'see' images
+    // IMPORTANT: Make it block so the browser registers the images inside
+    printContainer.style.display = 'block'; 
 
     try {
         for (let i = 1; i <= totalPages; i++) {
             const page = await pdfDoc.getPage(i);
-            const viewport = page.getViewport({scale: 2.0}); // Higher scale for clear print
+            const viewport = page.getViewport({scale: 2.0}); // High resolution for print
             
             const printCanvas = document.createElement('canvas');
             const printCtx = printCanvas.getContext('2d');
             printCanvas.width = viewport.width;
             printCanvas.height = viewport.height;
             
-            await page.render({canvasContext: printCtx, viewport: viewport}).promise;
+            await page.render({
+                canvasContext: printCtx,
+                viewport: viewport
+            }).promise;
             
             const img = document.createElement('img');
             img.src = printCanvas.toDataURL('image/png');
             img.className = 'print-page';
-            img.style.width = '100%';
             printContainer.appendChild(img);
-            
-            // Update Progress UI
-            const progress = Math.round((i / totalPages) * 100);
-            progressOverlay.innerHTML = `<h3>Preparing: ${progress}%</h3><p>Page ${i} of ${totalPages}</p>`;
         }
         
-        document.body.removeChild(progressOverlay);
-        
-        // Final check to ensure all images are loaded into the DOM
+        // Give the browser a moment to render the images into the DOM
         setTimeout(() => {
             window.print();
             
-            // Reset UI after print dialog closes
+            // Cleanup after the print dialog is closed
             printContainer.style.display = 'none';
             printContainer.innerHTML = '';
             printBtn.disabled = false;
             printBtn.textContent = '🖨️ Print This Chapter';
-        }, 800);
+        }, 1000);
         
     } catch (error) {
         console.error('Print error:', error);
-        alert('Error preparing print.');
-        if(progressOverlay.parentNode) document.body.removeChild(progressOverlay);
+        alert('Error preparing document.');
         printBtn.disabled = false;
     }
 }
