@@ -1,3 +1,128 @@
+
+
+            <h2 class="selection-title">📚 Select Study Material</h2>
+            <div class="pdf-cards">
+                <div class="pdf-card">
+                    <div class="pdf-card-icon">📖</div>
+                    <h3 class="pdf-card-title">गलतीकरांस पत्र</h3>
+                    <p class="pdf-card-desc"></p>
+                    <button onclick="openPDF(1)">View Study Material</button>
+                </div>
+
+                <div class="pdf-card">
+                    <div class="pdf-card-icon">📕</div>
+                    <h3 class="pdf-card-title">इफिसकरांस पत्र </h3>
+                    <p class="pdf-card-desc"></p>
+                    <button onclick="openPDF(2)">View Study Material</button>
+                </div>
+
+                <div class="pdf-card">
+                    <div class="pdf-card-icon">📗</div>
+                    <h3 class="pdf-card-title">फिलिप्पैकरांस पत्र</h3>
+                    <p class="pdf-card-desc"></p>
+                    <button onclick="openPDF(3)">View Study Material</button>
+                </div>
+
+                <div class="pdf-card">
+                    <div class="pdf-card-icon">📘</div>
+                    <h3 class="pdf-card-title">करींथकरास दुसरे  पत्र </h3>
+                    <p class="pdf-card-desc"></p>
+                    <button onclick="openPDF(4)">View Study Material</button>
+                </div>
+                 <div class="pdf-card">
+                    <div class="pdf-card-icon">📘</div>
+                    <h3 class="pdf-card-title">करींथकरास पहिले  पत्र </h3>
+                    <p class="pdf-card-desc"></p>
+                    <button onclick="openPDF(5)">View Study Material</button>
+                </div>
+                 <div class="pdf-card">
+                    <div class="pdf-card-icon">📘</div>
+                    <h3 class="pdf-card-title">कलस्सै </h3>
+                    <p class="pdf-card-desc"></p>
+                    <button onclick="openPDF(6)">View Study Material</button>
+                </div>
+                      <div class="pdf-card">
+                    <div class="pdf-card-icon">📘</div>
+                    <h3 class="pdf-card-title">1 थेस्सल </h3>
+                    <p class="pdf-card-desc"></p>
+                    <button onclick="openPDF(7)">View Study Material</button>
+                </div>
+                      <div class="pdf-card">
+                    <div class="pdf-card-icon">📘</div>
+                    <h3 class="pdf-card-title">2 थेस्सल</h3>
+                    <p class="pdf-card-desc"></p>
+                    <button onclick="openPDF(8)">View Study Material</button>
+                </div>
+              
+            </div>
+        </div>
+
+      
+        // WHITELIST - Authorized emails
+        const ALLOWED_EMAILS = {
+            'p82158860@gmail.com': 'Pritee Gaikwad',
+            'ranjeeta.kamble333@gmail.com': 'Ranjeeta Kamble',
+            'vypardh78@gmail.com': 'Vishal Pardhe',
+            'rvpardhe07@gmail.com': 'Kavita Pardhe',
+            'hiwalefrancis@gmail.com': 'HIWALE FRANCIS TATYABA',
+            'varshabhore55@gmail.com': 'Varsha ram bhore',
+            'jadhavsushma05@gmail.com': 'Sushma Jadhav',
+            'shwetadalge14@gmail.com': 'Shweta Shirish dalge',
+            'jlibiblecollege@gmail.com': 'Bible College Admin', 
+            'manoramaramane@gmail.com': 'Manorama Ramane',
+            'buddhiwantmeene@gmail.com': 'Meena Buddhiwant',
+     //       'vishforluv1982@gmail.com': 'Vishwas Bhosale',
+            'ashubaladon@gmail.com': 'Ashish Dongerdive',
+            'bordeamol26@gmail.com': 'Amol Borde',
+            'borde.siyona@gmail.com': 'Siyona Borde',
+     //       'dpadvi604@gmail.com': 'Dinesh Padvi',
+            'khilarelajo@gmail.com': 'Helen Khilare',
+            'fkhilare@gmail.com': 'Francis Khilare',
+            'bhaleraojitesh727@gmail.com': 'Jitesh Bhalerao',
+      //      'brani4211@gmail.com': 'Rani Bhosale',
+   //       'aadamgujare@gmail.com': 'Aadam Gujare',
+            'michaelsalvi9324@gmail.com': 'Michael Salvi',
+   //         'manisha.fernandis15@gmail.com': 'Manisha Fernandis'
+        };
+
+        // PDF Configuration
+        const PDF_FILE_PATH = {
+            1: {
+                file: '48 .Galations.pdf',
+                title: ''
+            },
+            2: {
+                file: '49.Ephesians.pdf',
+                title: ''
+            },
+            3: {
+                file: '50 .Phillipians.pdf',
+                title: ''
+            },
+            4: {
+                file: '2-corinthians.pdf',
+                title: ''
+            },
+            5: {
+                file: '46 .1 corinthians.pdf',
+                title: ''
+            },
+            6: {
+                file: '51 colossians.pdf',
+                title: ''
+            },
+         7 : {
+                file: '52.1 thesollonians.pdf',
+                title: ''
+            },
+           8 : {
+                file: '53. 2 thesollonians.pdf',
+                title: ''
+            }
+        };
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +131,6 @@
     <title>Bible College of India - Pastors Foundation Course</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
-        /* Existing CSS styles remain unchanged */
         * {
             margin: 0;
             padding: 0;
@@ -201,7 +325,6 @@
             color: #1b5e20;
             font-weight: 600;
         }
-        /* The .action-btn CSS is removed from here as additional-features.js handles inline styling */
 
         .logout-btn {
             width: auto;
@@ -431,117 +554,84 @@
             font-weight: 600;
         }
 
-        /* New styles for Admin Dashboard */
-        .admin-dashboard {
-            display: none; /* Hidden by default */
-            padding: 40px;
-            background: #f8f9fa;
-        }
-
-        .admin-header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .admin-header h2 {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-
-        .admin-controls {
-            display: flex;
-            justify-content: flex-end; /* Pushes logout to the right */
-            margin-bottom: 20px;
-        }
-
-        .student-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .student-card {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            border-left: 5px solid #1e3c72;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .student-card h3 {
-            color: #1e3c72;
-            margin-bottom: 10px;
-            font-size: 1.3em;
-        }
-
-        .student-card p {
-            color: #666;
-            font-size: 0.9em;
-            margin-bottom: 15px;
-            flex-grow: 1; /* Allows card to expand evenly */
-        }
-
-        .student-card-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap; /* For responsiveness */
-        }
-
-        .student-card-actions button {
-            flex-grow: 1; /* Buttons take equal space */
-            width: auto; /* Override default 100% width for individual buttons in card */
-            padding: 10px 15px;
-            font-size: 0.9em;
-            border-radius: 6px;
-        }
-
-        .btn-view-profile {
-            background: linear-gradient(135deg, #2196f3 0%, #00bcd4 100%);
-        }
-        .btn-view-profile:hover {
-            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
-        }
-
-        .btn-view-marksheet {
-            background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
-        }
-        .btn-view-marksheet:hover {
-            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
-        }
-
-
+        /* CRITICAL PRINT PROTECTION - Default: Hide everything when printing */
         @media print {
             @page {
                 size: A4;
                 margin: 0.5cm;
             }
             
+            /* BY DEFAULT: Hide all content during print/save as PDF */
             body * {
+                display: none !important;
                 visibility: hidden !important;
             }
             
-            #print-container,
-            #print-container * {
+            /* Show warning message for unauthorized prints */
+            body::before {
+                content: "⚠️ UNAUTHORIZED PRINT ATTEMPT" !important;
+                display: block !important;
+                visibility: visible !important;
+                position: fixed !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                font-size: 36px !important;
+                color: #dc3545 !important;
+                font-weight: bold !important;
+                text-align: center !important;
+                padding: 40px !important;
+                border: 5px solid #dc3545 !important;
+                background: white !important;
+                width: 80% !important;
+                max-width: 600px !important;
+            }
+            
+            body::after {
+                content: "Please use the official 'Print This Chapter' button within the application. Direct printing and Save as PDF are not permitted." !important;
+                display: block !important;
+                visibility: visible !important;
+                position: fixed !important;
+                top: 60% !important;
+                left: 50% !important;
+                transform: translate(-50%, 0) !important;
+                font-size: 18px !important;
+                color: #666 !important;
+                text-align: center !important;
+                padding: 20px !important;
+                background: white !important;
+                width: 80% !important;
+                max-width: 600px !important;
+            }
+        }
+        
+        /* AUTHORIZED PRINT CLASS - Only applied by official button */
+        @media print {
+            body.authorized-print * {
+                display: none !important;
+                visibility: hidden !important;
+            }
+            
+            body.authorized-print::before,
+            body.authorized-print::after {
+                display: none !important;
+                content: none !important;
+            }
+            
+            body.authorized-print #print-container,
+            body.authorized-print #print-container * {
+                display: block !important;
                 visibility: visible !important;
             }
             
-            #print-container {
+            body.authorized-print #print-container {
                 position: absolute !important;
                 left: 0 !important;
                 top: 0 !important;
                 width: 100% !important;
-                display: block !important;
             }
             
-            .print-page {
+            body.authorized-print .print-page {
                 page-break-after: always !important;
                 page-break-inside: avoid !important;
                 display: block !important;
@@ -550,11 +640,11 @@
                 padding: 0 !important;
             }
             
-            .print-page:last-child {
+            body.authorized-print .print-page:last-child {
                 page-break-after: avoid !important;
             }
 
-            .print-page img {
+            body.authorized-print .print-page img {
                 max-width: 100% !important;
                 height: auto !important;
                 display: block !important;
@@ -575,13 +665,6 @@
             .print-progress {
                 min-width: 300px;
                 padding: 30px;
-            }
-            .profile-cards {
-                grid-template-columns: 1fr; /* Stack profile cards on small screens */
-            }
-            .student-card-actions button {
-                padding: 8px 12px; /* Smaller buttons on mobile */
-                font-size: 0.85em;
             }
         }
     </style>
@@ -624,11 +707,11 @@
                 <div class="student-info-text">
                     ✅ Logged in as: <span id="loggedEmail"></span>
                 </div>
-                <!-- The "View Marksheet" and "Student Profile" buttons will be dynamically added here by additional-features.js -->
                 <button class="logout-btn" onclick="logout()">Logout</button>
             </div>
 
             <h2 class="selection-title">📚 Select Study Material</h2>
+
             <div class="pdf-cards">
                 <div class="pdf-card">
                     <div class="pdf-card-icon">📖</div>
@@ -685,7 +768,7 @@
             </div>
         </div>
 
-         <div id="pdfViewer" class="pdf-viewer">
+        <div id="pdfViewer" class="pdf-viewer">
             <div class="back-btn-container">
                 <button class="back-btn" onclick="backToSelection()">⬅️ Back to All Chapters</button>
             </div>
@@ -713,34 +796,9 @@
                 <canvas id="pdf-canvas"></canvas>
             </div>
         </div>
-
-        <!-- NEW ADMIN DASHBOARD SECTION -->
-    <!-- NEW ADMIN DASHBOARD SECTION -->
-        <div id="adminDashboard" class="admin-dashboard">
-            <div class="admin-header">
-                <div style="font-size: 3em; margin-bottom: 10px;">👑</div>
-                <h2>Admin Dashboard</h2>
-                <p>Welcome, <span id="adminLoggedEmail"></span>! Manage student records here.</p>
-            </div>
-            <div class="admin-controls">
-                <button class="logout-btn" onclick="logout()">Logout</button>
-            </div>
-            <h3 class="selection-title" style="margin-bottom: 20px;">All Students</h3>
-            <div id="studentList" class="student-list">
-                <!-- Student cards will be populated here by JavaScript -->
-            </div>
-        </div>
-
-<div id="student-directory-wrapper" style="display:none; margin: 20px auto; max-width: 800px;">
-    <div id="admin-students-toggle-div"></div>
-</div>
-        <!-- END NEW ADMIN DASHBOARD SECTION -->
-
     </div>
 
     <div id="print-container"></div>
-    <!-- Your external JS files should be linked before the main script -->
-
 
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -808,14 +866,14 @@
             }
         };
 
-               let pdfDoc = null;
+
+        let pdfDoc = null;
         let pageNum = 1;
         let pageRendering = false;
         let pageNumPending = null;
         let scale = 1.5;
-        // Declare studentEmail and studentName globally so additional-features.js can access them
-        window.studentEmail = '';
-        window.studentName = '';
+        let studentEmail = '';
+        let studentName = '';
         let currentPdfId = null;
         const canvas = document.getElementById('pdf-canvas');
         const ctx = canvas.getContext('2d');
@@ -827,115 +885,71 @@
             }
         });
 
-        // Function to hide all main content sections
-        window.hideAllContentSections = function() { // Made global for additional-features.js to access
-            document.getElementById('loginSection').style.display = 'none';
+        function verifyAccess() {
+            const emailInput = document.getElementById('studentEmail');
+            const errorMsg = document.getElementById('errorMsg');
+            const successMsg = document.getElementById('successMsg');
+
+            const email = emailInput.value.trim().toLowerCase();
+
+            // Hide messages
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+
+            // Validation
+            if (!email) {
+                errorMsg.textContent = '⚠️ Please enter your email address';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            if (!email.includes('@') || !email.includes('.')) {
+                errorMsg.textContent = '⚠️ Please enter a valid email address';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            // Check whitelist
+            if (ALLOWED_EMAILS[email]) {
+                studentEmail = email;
+                studentName = ALLOWED_EMAILS[email];
+                successMsg.textContent = '✅ Access granted! Loading materials...';
+                successMsg.style.display = 'block';
+                
+                document.getElementById('loggedEmail').textContent = studentName + ' (' + email + ')';
+                
+                setTimeout(() => {
+                    document.getElementById('loginSection').style.display = 'none';
+                    document.getElementById('pdfSelection').style.display = 'block';
+                }, 1000);
+            } else {
+                errorMsg.textContent = '❌ Access Denied: Your email is not registered. Please contact the administrator.';
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        function logout() {
+            studentEmail = '';
+            studentName = '';
+            document.getElementById('studentEmail').value = '';
             document.getElementById('pdfSelection').style.display = 'none';
             document.getElementById('pdfViewer').style.display = 'none';
-            const marksheetSection = document.getElementById('marksheetSection');
-            if (marksheetSection) marksheetSection.style.display = 'none';
-            const profileSection = document.getElementById('profileSection');
-            if (profileSection) profileSection.style.display = 'none';
-            document.getElementById('adminDashboard').style.display = 'none'; // Hide admin dashboard too
-        }
-
-       function verifyAccess() {
-    const emailInput = document.getElementById('studentEmail');
-    const errorMsg = document.getElementById('errorMsg');
-    const successMsg = document.getElementById('successMsg');
-    const email = emailInput.value.trim().toLowerCase();
-
-    errorMsg.style.display = 'none';
-    successMsg.style.display = 'none';
-
-    // 1. Basic Validation
-    if (!email || !email.includes('@') || !email.includes('.')) {
-        errorMsg.textContent = '⚠️ Please enter a valid email address';
-        errorMsg.style.display = 'block';
-        return;
-    }
-
-    // 2. Check if Email is Authorized
-    if (ALLOWED_EMAILS[email]) {
-        window.studentEmail = email; 
-        window.studentName = ALLOWED_EMAILS[email];
-
-        if (typeof ActivityLogger !== 'undefined') ActivityLogger.init();
-
-        successMsg.textContent = '✅ Access granted! Loading...';
-        successMsg.style.display = 'block';
-        
-        // 3. Success Redirect Logic
-        setTimeout(() => {
-            window.hideAllContentSections(); 
-
-            if (email === 'jlibiblecollege@gmail.com') {
-                // ADMIN SUCCESS
-                localStorage.setItem('adminEmail', 'jlibiblecollege@gmail.com');
-                localStorage.setItem('isAdmin', 'true');
-                document.getElementById('adminLoggedEmail').textContent = window.studentName;
-                
-                if (typeof window.showAdminDashboard === 'function') {
-                    window.showAdminDashboard();
-                }
-                
-                // Set up the Admin Buttons (Only once)
-                const adminDiv = document.getElementById('admin-students-toggle-div');
-                if (adminDiv) {
-                    adminDiv.innerHTML = `
-                        <button onclick="ActivityLogger.ui.toggleStudents()" id="viewStudentsBtn" 
-                                style="background: #1e3c72; color: white; padding: 15px; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 10px; border: none; font-weight: bold;">
-                            👥 VIEW MAIN BATCH DIRECTORY
-                        </button>
-                        <button onclick="window.location.href='https://biblecollege2026.github.io/septemberbatch/10.html'" 
-                                style="background: #2a5298; color: white; padding: 15px; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 10px; border: none; font-weight: bold;">
-                            📂 OPEN SEPTEMBER BATCH PORTAL
-                        </button>
-                        <button onclick="window.location.href='https://biblecollege2026.github.io/biblecollege2026Januarybatch/10.html'" 
-                                style="background: #34495e; color: white; padding: 15px; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 15px; border: none; font-weight: bold;">
-                            ❄️ OPEN JANUARY 2026 BATCH PORTAL
-                        </button>`;
-                }
-            } else {
-                // STUDENT SUCCESS
-                document.getElementById('loggedEmail').textContent = window.studentName + ' (' + email + ')';
-                document.getElementById('pdfSelection').style.display = 'block';
-                if (typeof window.addAdditionalButtons === 'function') window.addAdditionalButtons();
-            }
-        }, 1000);
-
-    } else {
-        // 4. ACCESS DENIED
-        errorMsg.textContent = '❌ Access Denied: Your email is not registered.';
-        errorMsg.style.display = 'block';
-        
-        // Log the intrusion attempt
-        if (typeof ActivityLogger !== 'undefined') {
-            ActivityLogger.logActivity('Unauthorized Login Attempt', `Email: ${email}`);
-        }
-    }
-}
-        function logout() {
-            window.studentEmail = '';
-            window.studentName = '';
-            document.getElementById('studentEmail').value = '';
-            window.hideAllContentSections(); // Hide all current views
-            document.getElementById('loginSection').style.display = 'block'; // Show login section
+            document.getElementById('loginSection').style.display = 'block';
         }
 
         function openPDF(pdfId) {
             currentPdfId = pdfId;
             const pdfConfig = PDF_FILE_PATH[pdfId];
             
-            window.hideAllContentSections(); // Hide everything else
             document.getElementById('currentPdfTitle').textContent = pdfConfig.title;
+            document.getElementById('pdfSelection').style.display = 'none';
             document.getElementById('pdfViewer').style.display = 'block';
             
             loadPDF(pdfConfig.file);
         }
 
         function backToSelection() {
-            window.hideAllContentSections();
+            document.getElementById('pdfViewer').style.display = 'none';
             document.getElementById('pdfSelection').style.display = 'block';
             pdfDoc = null;
             pageNum = 1;
@@ -1023,6 +1037,9 @@
             queueRenderPage(pageNum);
         }
 
+        // --- PRINT PROTECTION SYSTEM ---
+        let isPrintingFromButton = false;
+
         async function printPDF() {
             if (!pdfDoc) {
                 alert('PDF not loaded yet');
@@ -1032,6 +1049,12 @@
             const pdfConfig = PDF_FILE_PATH[currentPdfId];
             const totalPages = pdfDoc.numPages;
             
+            if (!confirm(`Print all ${totalPages} pages of "${pdfConfig.title}"?\n\nThis will prepare all pages for printing.`)) {
+                return;
+            }
+
+            // Set the flag to allow printing
+            isPrintingFromButton = true;
 
             const printBtn = document.getElementById('printBtn');
             printBtn.disabled = true;
@@ -1095,7 +1118,7 @@
                         progressFill.textContent = progress + '%';
                     }
                     if (progressText) {
-                        progressText.textContent = `Loading page $${i} of $${totalPages}`;
+                        progressText.textContent = `Loading page ${i} of ${totalPages}`;
                     }
                 }
                 
@@ -1105,47 +1128,91 @@
                 // Show print container
                 printContainer.style.display = 'block';
                 
+                // ADD AUTHORIZED PRINT CLASS TO BODY - This enables CSS to show content
+                document.body.classList.add('authorized-print');
+                
                 // Small delay to ensure images are ready
                 setTimeout(() => {
                     // Trigger print dialog
                     window.print();
                     
-                    // Cleanup after print
+                    // Cleanup after print dialog closes
                     setTimeout(() => {
+                        // REMOVE AUTHORIZED CLASS - Future prints will be blocked again
+                        document.body.classList.remove('authorized-print');
+                        
                         printContainer.style.display = 'none';
                         printContainer.innerHTML = '';
                         printBtn.disabled = false;
                         printBtn.textContent = '🖨️ Print This Chapter';
-                    }, 500);
+                        isPrintingFromButton = false;
+                    }, 1000);
                 }, 500);
                 
             } catch (error) {
                 console.error('Print error:', error);
                 alert('Error preparing document for printing. Please try again.');
-                document.body.removeChild(progressOverlay);
+                if (document.body.contains(progressOverlay)) {
+                    document.body.removeChild(progressOverlay);
+                }
+                // REMOVE AUTHORIZED CLASS on error
+                document.body.classList.remove('authorized-print');
                 printBtn.disabled = false;
                 printBtn.textContent = '🖨️ Print This Chapter';
+                isPrintingFromButton = false;
             }
         }
+
+        // --- AUTO-LOGIN BRIDGE FOR ADMIN ---
         window.addEventListener('DOMContentLoaded', () => {
-        const savedEmail = localStorage.getItem('adminEmail');
-        const isAdmin = localStorage.getItem('isAdmin');
-
-        // If the browser remembers you are the Admin...
-        if (savedEmail === 'jlibiblecollege@gmail.com' && isAdmin === 'true') {
-            window.studentEmail = savedEmail; // Set your identity
+            // 1. Check if we arrived with an auth token in the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const authEmail = urlParams.get('auth');
             
-            // Automatically open the dashboard
-            if (typeof showAdminDashboard === "function") {
-                showAdminDashboard();
+            // 2. Check if we have a saved admin session in this browser
+            const savedAdminEmail = localStorage.getItem('adminEmail');
+            const isAdmin = localStorage.getItem('isAdmin');
+
+            // If either the URL says it's you, or the Browser memory says it's you...
+            if (authEmail === 'jlibiblecollege@gmail.com' || (savedAdminEmail === 'jlibiblecollege@gmail.com' && isAdmin === 'true')) {
+                
+                console.log("Admin detected! Bypassing login gate...");
+                
+                // Fill the input and trigger the login function automatically
+                const emailInput = document.getElementById('studentEmail');
+                if (emailInput) {
+                    emailInput.value = 'jlibiblecollege@gmail.com';
+                    
+                    // Wait a split second for the rest of the page to be ready, then click login
+                    setTimeout(() => {
+                        verifyAccess(); 
+                    }, 100);
+                }
             }
-        }
-    });
+        });
+
+        // --- PREVENT UNAUTHORIZED PRINTING / SAVE AS PDF ---
+        // CSS handles the protection - no authorized-print class = blank page
+        
+        // Also detect Ctrl+P / Cmd+P keyboard shortcut
+        document.addEventListener('keydown', function(event) {
+            // Detect Ctrl+P (Windows/Linux) or Cmd+P (Mac)
+            if ((event.ctrlKey || event.metaKey) && event.key === 'p') {
+                event.preventDefault();
+                alert('⚠️ Please use the "Print This Chapter" button within the application to print materials.\n\nDirect printing via Ctrl+P is not permitted.');
+                return false;
+            }
+        });
+
+        // Disable right-click context menu to prevent "Print" option
+        document.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
+            return false;
+        });
+
     </script>
-    </body>
+</body>
 </html>
-
-
 
 
 
