@@ -232,6 +232,7 @@
                 </div>
 
                 <div class="marksheet-header" style="background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%); color: white; padding: 20px; text-align: center; border-radius: 12px; margin-bottom: 20px;">
+                    <div id="rank-badge-container"></div>
                     <div style="font-size: 1.25em; font-weight: bold; line-height: 1.2; margin-top: 10px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; vertical-align: middle; font-variant-numeric: lining-nums;">
                         CERTIFICATE IN THEOLOGY (C.T.H) 2025 OLD TESTAMENT EXAM RESULT
                     </div>
@@ -294,102 +295,177 @@
         return section;
     }
 
-    
-function populateMarksheet(studentMarksData, studentProfileData, email) {
+    function populateMarksheet(studentMarksData, studentProfileData, email) {
     const onlineMarks = studentMarksData.marks;
     const examMonths = STUDENT_DATA.examMonths;
     const offlineMark = studentMarksData.offlineMark;
-
+    
     let totalOnlineMarks = 0;
     let onlineExamsTaken = 0;
     const tableBody = document.getElementById('marks-table-body');
     tableBody.innerHTML = '';
 
-    // 1. Online Exam Rows
+    // 1. Process Online Exam Rows
     onlineMarks.forEach((mark, index) => {
         if (mark !== null && typeof mark === 'number') {
             totalOnlineMarks += mark;
             onlineExamsTaken++;
         }
+        const statusText = getStatus(mark);
         const row = document.createElement('tr');
+        // Applied smaller padding (4px) and smaller font (0.75rem)
         row.innerHTML = `
             <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; font-weight: 600;">${examMonths[index]}</td>
-            <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center;">${mark !== null ? mark : 'Absent'}</td>
+            <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center; font-variant-numeric: lining-nums;">${mark !== null ? mark : 'Absent'}</td>
             <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center;">100</td>
-            <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center;">${mark !== null ? mark + '%' : '-'}</td>
-            <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center; font-weight: 600;">${getStatus(mark)}</td>
+            <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center; font-variant-numeric: lining-nums;">${mark !== null ? mark + '%' : '-'}</td>
+            <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center; font-weight: 600;">${statusText}</td>
         `;
         tableBody.appendChild(row);
     });
 
-    // 2. Calculations
-    const monthlyAvg = (totalOnlineMarks / 700) * 100;
-    const weight20 = monthlyAvg * 0.20;
-    const actualOffline = (offlineMark !== null && typeof offlineMark === 'number') ? offlineMark : 0;
-    const weight80 = actualOffline * 0.80;
-    const finalPer = parseFloat((weight20 + weight80).toFixed(2));
+    // 2. FIX: Update the Orange Box for Exams Taken
+    const examsTakenElement = document.getElementById('online-exams-taken');
+    if (examsTakenElement) {
+        examsTakenElement.textContent = `${onlineExamsTaken}/7`;
+    }
 
-    // 3. Summary rows
-    const summaryData = [
-        { label: 'Total Monthly (700)', val: totalOnlineMarks, outOf: 700, per: monthlyAvg.toFixed(2) + '%', statusVal: monthlyAvg },
-        { label: 'Offline Exam (%)',    val: actualOffline,    outOf: 100, per: actualOffline + '%',         statusVal: actualOffline }
-    ];
-    summaryData.forEach(item => {
-        const r = document.createElement('tr');
-        r.style.background = '#f8f9fa';
-        r.innerHTML = `
-            <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; font-weight: bold;">${item.label}</td>
-            <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center;">${item.val}</td>
-            <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center;">${item.outOf}</td>
-            <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center;">${item.per}</td>
-            <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center; font-weight: 600;">${getStatus(item.statusVal)}</td>
-        `;
-        tableBody.appendChild(r);
-    });
+    // 3. Calculate Averages
+    const onlineAvg = totalOnlineMarks / 7;
+    const finalPer = (onlineAvg * 0.20) + (offlineMark * 0.80);
 
-    // 4. Weightage rows
-    const rows2080 = [
-        { label: '20% of Monthly average', val: weight20.toFixed(2), outOf: 20, statusVal: monthlyAvg },
-        { label: '80% of Offline exam',    val: weight80.toFixed(2), outOf: 80, statusVal: actualOffline }
-    ];
-    rows2080.forEach(item => {
-        const row = document.createElement('tr');
-        row.style.background = '#eef2f7';
-        row.innerHTML = `
-            <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; font-weight: bold; color: #1e3c72;">${item.label}</td>
-            <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center;">${item.val}</td>
-            <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center;">${item.outOf}</td>
-            <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center;">-</td>
-            <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center; font-weight: 600;">${getStatus(item.statusVal)}</td>
-        `;
-        tableBody.appendChild(row);
-    });
-
-    // 5. Final result row
-    const finalRow = document.createElement('tr');
-    finalRow.style.background = '#fff3cd';
-    finalRow.innerHTML = `
-        <td style="padding: 6px 8px; border: 1px solid #ddd; font-size: 0.85rem; font-weight: 900; color: #856404;">Final Result</td>
-        <td style="padding: 6px 8px; border: 1px solid #ddd; font-size: 0.85rem; text-align: center; font-weight: 900;">${finalPer.toFixed(2)}</td>
-        <td style="padding: 6px 8px; border: 1px solid #ddd; font-size: 0.85rem; text-align: center; font-weight: 900;">100</td>
-        <td style="padding: 6px 8px; border: 1px solid #ddd; font-size: 0.85rem; text-align: center; font-weight: 900;">${finalPer}%</td>
-        <td style="padding: 6px 8px; border: 1px solid #ddd; font-size: 0.85rem; text-align: center; font-weight: 900;">${getStatus(finalPer)}</td>
+    // 4. Create Summary Rows (r1, r2, r3, r4, r5)
+    // Example for r1 (Total Online)
+    const r1 = document.createElement('tr');
+    r1.style.backgroundColor = '#f9f9f9';
+    r1.innerHTML = `
+        <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; font-weight: 900;">Total Online (700)</td>
+        <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center; font-weight: 900;">${totalOnlineMarks}</td>
+        <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center; font-weight: 900;">700</td>
+        <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center; font-weight: 900;">${onlineAvg.toFixed(2)}%</td>
+        <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center; font-weight: 900;">${getStatus(onlineAvg)}</td>
     `;
-    tableBody.appendChild(finalRow);
+    tableBody.appendChild(r1);
 
-    
+    // Note: Repeat this logic for r2, r3, r4, and r5 using 4px padding and 0.75rem font.
 
-    // 6. Update header displays
+    // 5. Update the Final Header Scores
+    document.getElementById('ot-final-display').textContent = finalPer.toFixed(2) + '%';
     document.getElementById('marksheet-student-name').textContent = studentProfileData.name;
     document.getElementById('marksheet-student-email-display').textContent = email;
-    document.getElementById('online-exams-taken').textContent = `${onlineExamsTaken}/7`;  // ← THE FIX
-
-    const finalPerElement = document.getElementById('final-percentage-score');
-    finalPerElement.textContent = finalPer + '%';
-    finalPerElement.style.fontVariantNumeric = 'lining-nums';
-
-    document.getElementById('final-grade-display').textContent = calculateGrade(finalPer);
 }
+
+        // Calculations
+        const monthlyAvg = (totalOnlineMarks / 700) * 100;
+        const weight20 = monthlyAvg * 0.20;
+        const actualOffline = (offlineMark !== null && typeof offlineMark === 'number') ? offlineMark : 0;
+        const weight80 = actualOffline * 0.80;
+        const finalPer = parseFloat((weight20 + weight80).toFixed(2));
+
+        // Rows for Monthly Total and Offline Exam
+        const summaryData = [
+            { label: 'Total Monthly (700)', val: totalOnlineMarks.toFixed(2), outOf: 700, per: monthlyAvg.toFixed(2) + '%' },
+            { label: 'Offline Exam (%)', val: actualOffline.toFixed(2), outOf: 100, per: actualOffline + '%' }
+        ];
+
+        summaryData.forEach((item) => {
+            const r = document.createElement('tr');
+            r.style.background = '#f8f9fa';
+            // Calculate status based on actual performance percentage
+            const performancePercentage = item.label.includes('700') ? (item.val / 7) : item.val;
+            r.innerHTML = `
+                <td style="padding: 6px; border: 1px solid #ddd; font-size: 0.85em; font-weight: bold;">${item.label}</td>
+                <td style="padding: 6px; border: 1px solid #ddd; font-size: 0.85em; text-align: center; font-variant-numeric: lining-nums;">${item.val}</td>
+                <td style="padding: 6px; border: 1px solid #ddd; font-size: 0.85em; text-align: center;">${item.outOf}</td>
+                <td style="padding: 6px; border: 1px solid #ddd; font-size: 0.85em; text-align: center; font-variant-numeric: lining-nums;">${item.per}</td>
+                <td style="padding: 6px; border: 1px solid #ddd; font-size: 0.85em; text-align: center; font-weight: 600;">${getStatus(performancePercentage)}</td>
+            `;
+            tableBody.appendChild(r);
+        });
+
+        // --- FIXED STATUS FOR WEIGHTAGE ROWS ---
+        const rows2080 = [
+            { label: '20% of Monthly average', val: weight20.toFixed(2), outOf: 20, statusVal: monthlyAvg },
+            { label: '80% of Offline exam', val: weight80.toFixed(2), outOf: 80, statusVal: actualOffline }
+        ];
+
+        rows2080.forEach(item => {
+            const row = document.createElement('tr');
+            row.style.background = '#eef2f7';
+            row.innerHTML = `
+                <td style="padding: 6px; border: 1px solid #ddd; font-size: 0.85em; font-weight: bold; color: #1e3c72;">${item.label}</td>
+                <td style="padding: 6px; border: 1px solid #ddd; font-size: 0.85em; text-align: center; font-variant-numeric: lining-nums;">${item.val}</td>
+                <td style="padding: 6px; border: 1px solid #ddd; font-size: 0.85em; text-align: center;">${item.outOf}</td>
+                <td style="padding: 6px; border: 1px solid #ddd; font-size: 0.85em; text-align: center;">-</td>
+                <td style="padding: 6px; border: 1px solid #ddd; font-size: 0.85em; text-align: center; font-weight: 600;">${getStatus(item.statusVal)}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        // Final Result Row
+        const finalRow = document.createElement('tr');
+        finalRow.style.background = '#fff3cd';
+        finalRow.innerHTML = `
+            <td style="padding: 6px; border: 1px solid #ddd; font-size: 0.9em; font-weight: 900; color: #856404;">Final result</td>
+            <td style="padding: 6px; border: 1px solid #ddd; font-size: 0.9em; text-align: center; font-weight: 900; font-variant-numeric: lining-nums;">${finalPer.toFixed(2)}</td>
+            <td style="padding: 6px; border: 1px solid #ddd; font-size: 0.9em; text-align: center; font-weight: 900;">100</td>
+            <td style="padding: 6px; border: 1px solid #ddd; font-size: 0.9em; text-align: center; font-weight: 900; font-variant-numeric: lining-nums;">${finalPer}%</td>
+            <td style="padding: 6px; border: 1px solid #ddd; font-size: 0.9em; text-align: center; font-weight: 900;">${getStatus(finalPer)}</td>
+        `;
+        tableBody.appendChild(finalRow);
+
+        // Ranking logic
+        const allScores = Object.keys(STUDENT_DATA.marks).map(e => {
+            const m = STUDENT_DATA.marks[e];
+            const avg = (m.marks.reduce((a, b) => (typeof b === 'number' ? a + b : a), 0) / 700) * 100;
+            const off = (typeof m.offlineMark === 'number') ? m.offlineMark : 0;
+            return parseFloat(((avg * 0.20) + (off * 0.80)).toFixed(2));
+        }).sort((a, b) => b - a);
+
+        const rank = allScores.indexOf(finalPer) + 1;
+        const rankContainer = document.getElementById('rank-badge-container');
+        rankContainer.innerHTML = '';
+        
+       if (rank > 0 && rank <= 5) {
+    const badge = document.createElement('div');
+    // THE FIX: Use 'display: flex', 'align-items: center', and 'line-height: 1'
+    badge.style.cssText = `
+        background: #ffd700; 
+        color: #000; 
+        padding: 0 20px; 
+        border-radius: 30px; 
+        font-weight: 900; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        height: 35px; 
+        line-height: 1; 
+        margin: 0 auto 15px auto; 
+        border: 3px solid #fff; 
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
+        font-size: 1rem; 
+        text-transform: uppercase;
+        font-family: 'Segoe UI', Roboto, Arial, sans-serif; /* Added for alignment */
+    `;
+
+    // Wrap the rank in a span to control its vertical behavior
+    badge.innerHTML = `🏆 TOP <span style="margin: 0 5px; display: inline-block; line-height: 1;">${rank}</span> RANK`;
+    rankContainer.appendChild(badge);
+}
+
+        // Update Final UI with alignment fixes
+        console.log("studentProfileData:", studentProfileData); // Add this line
+        document.getElementById('marksheet-student-name').textContent = studentProfileData.name;
+        document.getElementById('marksheet-student-email-display').textContent = email;
+        document.getElementById('online-exams-taken').textContent = `${onlineExamsTaken}/7`;
+        
+        const finalPerElement = document.getElementById('final-percentage-score');
+        finalPerElement.textContent = finalPer + '%';
+        finalPerElement.style.fontVariantNumeric = 'lining-nums';
+        
+        document.getElementById('final-grade-display').textContent = calculateGrade(finalPer);
+    }
+
     function calculateGrade(percentage) {
         if (percentage === null || isNaN(percentage)) return 'N/A';
         if (percentage >= 90) return 'A+';
