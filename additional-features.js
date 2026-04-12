@@ -296,31 +296,64 @@
     }
 
     function populateMarksheet(studentMarksData, studentProfileData, email) {
-        const onlineMarks = studentMarksData.marks;
-        const examMonths = STUDENT_DATA.examMonths;
-        const offlineMark = studentMarksData.offlineMark;
-        
-        let totalOnlineMarks = 0;
-        let onlineExamsTaken = 0;
-        const tableBody = document.getElementById('marks-table-body');
-        tableBody.innerHTML = '';
+    const onlineMarks = studentMarksData.marks;
+    const examMonths = STUDENT_DATA.examMonths;
+    const offlineMark = studentMarksData.offlineMark;
+    
+    let totalOnlineMarks = 0;
+    let onlineExamsTaken = 0;
+    const tableBody = document.getElementById('marks-table-body');
+    tableBody.innerHTML = '';
 
-        onlineMarks.forEach((mark, index) => {
-            if (mark !== null && typeof mark === 'number') {
-                totalOnlineMarks += mark;
-                onlineExamsTaken++;
-            }
-            const statusText = getStatus(mark);
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td style="padding: 6px; border: 1px solid #ddd; font-size: 0.85em; font-weight: 600;">${examMonths[index]}</td>
-                <td style="padding: 6px; border: 1px solid #ddd; font-size: 0.85em; text-align: center; font-variant-numeric: lining-nums;">${mark !== null ? mark : 'Absent'}</td>
-                <td style="padding: 6px; border: 1px solid #ddd; font-size: 0.85em; text-align: center;">100</td>
-                <td style="padding: 6px; border: 1px solid #ddd; font-size: 0.85em; text-align: center; font-variant-numeric: lining-nums;">${mark !== null ? mark + '%' : '-'}</td>
-                <td style="padding: 6px; border: 1px solid #ddd; font-size: 0.85em; text-align: center; font-weight: 600;">${statusText}</td>
-            `;
-            tableBody.appendChild(row);
-        });
+    // 1. Process Online Exam Rows
+    onlineMarks.forEach((mark, index) => {
+        if (mark !== null && typeof mark === 'number') {
+            totalOnlineMarks += mark;
+            onlineExamsTaken++;
+        }
+        const statusText = getStatus(mark);
+        const row = document.createElement('tr');
+        // Applied smaller padding (4px) and smaller font (0.75rem)
+        row.innerHTML = `
+            <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; font-weight: 600;">${examMonths[index]}</td>
+            <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center; font-variant-numeric: lining-nums;">${mark !== null ? mark : 'Absent'}</td>
+            <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center;">100</td>
+            <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center; font-variant-numeric: lining-nums;">${mark !== null ? mark + '%' : '-'}</td>
+            <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center; font-weight: 600;">${statusText}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+
+    // 2. FIX: Update the Orange Box for Exams Taken
+    const examsTakenElement = document.getElementById('online-exams-taken');
+    if (examsTakenElement) {
+        examsTakenElement.textContent = `${onlineExamsTaken}/7`;
+    }
+
+    // 3. Calculate Averages
+    const onlineAvg = totalOnlineMarks / 7;
+    const finalPer = (onlineAvg * 0.20) + (offlineMark * 0.80);
+
+    // 4. Create Summary Rows (r1, r2, r3, r4, r5)
+    // Example for r1 (Total Online)
+    const r1 = document.createElement('tr');
+    r1.style.backgroundColor = '#f9f9f9';
+    r1.innerHTML = `
+        <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; font-weight: 900;">Total Online (700)</td>
+        <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center; font-weight: 900;">${totalOnlineMarks}</td>
+        <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center; font-weight: 900;">700</td>
+        <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center; font-weight: 900;">${onlineAvg.toFixed(2)}%</td>
+        <td style="padding: 4px 8px; border: 1px solid #ddd; font-size: 0.75rem; text-align: center; font-weight: 900;">${getStatus(onlineAvg)}</td>
+    `;
+    tableBody.appendChild(r1);
+
+    // Note: Repeat this logic for r2, r3, r4, and r5 using 4px padding and 0.75rem font.
+
+    // 5. Update the Final Header Scores
+    document.getElementById('ot-final-display').textContent = finalPer.toFixed(2) + '%';
+    document.getElementById('marksheet-student-name').textContent = studentProfileData.name;
+    document.getElementById('marksheet-student-email-display').textContent = email;
+}
 
         // Calculations
         const monthlyAvg = (totalOnlineMarks / 700) * 100;
